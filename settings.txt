@@ -1,0 +1,13 @@
+settings.ini a masteren:
+
+mode=master
+slaveIp=10.10.10.6
+slavePort=8081
+
+
+settings.ini a slaven:
+
+mode=false
+slaveIp=10.10.10.100
+slavePort=8081
+slaveFullSize=false

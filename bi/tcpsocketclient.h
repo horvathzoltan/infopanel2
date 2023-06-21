@@ -1,11 +1,11 @@
-#ifndef TCPSOCKETSENDER_H
-#define TCPSOCKETSENDER_H
+#ifndef TCPSOCKETCLIENT_H
+#define TCPSOCKETCLIENT_H
 
 #include <QHostAddress>
 #include <QString>
 #include <QTcpSocket>
 
-class TcpSocketSender
+class TcpSocketClient
 {
 private:
     QHostAddress _host;
@@ -14,10 +14,10 @@ private:
     bool _verbose;
 public:
     void SetVerbose(bool v){_verbose=v;}
-    TcpSocketSender(const QHostAddress& address, quint16 port);
-    ~TcpSocketSender();
+    TcpSocketClient(const QHostAddress& address, quint16 port);
+    ~TcpSocketClient();
 
     QString Send(const QString& request);
 };
 
-#endif // TCPSOCKETSENDER_H
+#endif // TCPSOCKETCLIENT_H

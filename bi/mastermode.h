@@ -2,7 +2,7 @@
 #define MASTERMODE_H
 
 #include <QTimer>
-#include "bi/tcpsocketsender.h"
+#include "bi/tcpsocketclient.h"
 #include "mode.h"
 
 
@@ -13,7 +13,7 @@ class MasterMode : public QObject ,public Mode
 private:
     QTimer *_timer;
     int _counter;
-    TcpSocketSender *_tcpSocketSender;
+    TcpSocketClient *_tcpSocketSender;
 
 public:
     MasterMode(QObject* p = nullptr);

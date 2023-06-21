@@ -10,9 +10,13 @@ private:
     bool _masterMode=true;
     QHostAddress _slaveHostAddress;
     qint16 _slavePort=8081;
+    bool _slaveFullSize = false;
 
     static bool ParseMaster(const QString& v, bool *ok);
+    static bool ParseBool(const QString& v, bool *ok);
+
     bool Parse_masterMode(const QMap<QString, QString>& m);
+    bool Parse_slaveFullSize(const QMap<QString, QString>& m);
     bool Parse_slavePort(const QMap<QString, QString>& m);
     bool Parse_slaveHostAddress(const QMap<QString, QString>& m);
 
@@ -22,6 +26,7 @@ public:
     QHostAddress SlaveHostAddress(){return _slaveHostAddress;}
     qint16 SlavePort(){return _slavePort;}
     bool MasterMode(){return _masterMode;}
+    bool SlaveFullSize(){return _slaveFullSize;}
 };
 
 #endif // SETTINGS_H

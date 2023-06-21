@@ -3,6 +3,7 @@
 #include "helpers/logger.h"
 #include "bi/cechelper.h"
 #include "settings.h"
+#include "webapihelper.h"
 
 extern Settings settings;
 
@@ -11,8 +12,8 @@ MasterMode::MasterMode(QObject*p): QObject(p), Mode(true)
     _timer = new QTimer();
     _timer->connect(_timer, &QTimer::timeout, this,  &MasterMode::On_Timeout);
     _counter = 0;
-
-    _tcpSocketSender = new TcpSocketSender(
+    
+    _tcpSocketSender = new TcpSocketClient(
         settings.SlaveHostAddress(),
         settings.SlavePort());
 }
@@ -29,7 +30,9 @@ void  MasterMode::Start()
 {
     zInfo("starting MasterMode...");
 
-    QString cmd = QStringLiteral("master:started");
+    WebApiHelper::GetDevice();
+
+    QString cmd = QStringLiteral("master:started");       
     QString response = _tcpSocketSender->Send(cmd);
     zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
 

@@ -22,7 +22,6 @@
 /*
     scp 2.jpg pi@172.16.1.17:~/infopanel_pictures
 */
-// git teszt 1 - push teszt 2
 
 extern Settings settings;
 
@@ -68,19 +67,13 @@ int main(int argc, char *argv[])
 
     QString test = parser.value(OPTION_TEST);
     bool hasMasterOption = parser.isSet(OPTION_MASTER);
-    bool isMasterMode;
-
-    if(hasMasterOption){
-       isMasterMode = true;
-    } else{
-       isMasterMode = settings.MasterMode();
-    }
+    bool isMasterMode = hasMasterOption?true:settings.MasterMode();
 
     zInfo("test: "+test);
     zInfo("isMasterMode: " + QString::number(isMasterMode));
-    //Mode *mode;
-    SlaveMode *slaveMode;
-    MasterMode *masterMode;
+
+    SlaveMode *slaveMode=nullptr;
+    MasterMode *masterMode=nullptr;
     if(isMasterMode)
     {
         zInfo("entering MasterMode...");
@@ -98,10 +91,12 @@ int main(int argc, char *argv[])
         zInfo("Mode: " + QString::number(slaveMode->IsMater()));
     }
 
-
     int e = app.exec();
 
     zInfo("ExitCode: " + QString::number(e));
+
+    delete(slaveMode);
+    delete(masterMode);
     return e;
 }
 

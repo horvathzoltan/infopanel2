@@ -20,8 +20,8 @@ bool Settings::Load(const QString &fn)
             Settings::Parse_masterMode(m);
             Settings::Parse_slavePort(m);
             Settings::Parse_slaveHostAddress(m);
+            Settings::Parse_slaveFullSize(m);
         }
-
     }
     return false;
 }
@@ -56,6 +56,40 @@ bool Settings::ParseMaster(const QString& v, bool *ok){
         if(ok!=nullptr) *ok=false;
     }
     return master;
+}
+
+bool Settings::ParseBool(const QString& v, bool *ok){
+    bool value;
+
+    if(v==QStringLiteral("true")){
+        value=true;
+        if(ok!=nullptr) *ok=true;
+    }
+    else if(v==QStringLiteral("false")){
+        value=false;
+        if(ok!=nullptr) *ok=true;
+    }
+    else{
+        bool parse_ok;
+        int i = v.toInt(&parse_ok);
+        value=parse_ok && i!=0;
+        if(ok!=nullptr) *ok=false;
+    }
+    return value;
+}
+
+bool Settings::Parse_slaveFullSize(const QMap<QString, QString>& m){
+    bool retVal=false;
+    QString v = "";
+    bool isMode = IniHelper::TryGetValue(m, "slaveFullSize", &v);
+    if(isMode && !v.isEmpty()){
+        bool parse_ok;
+        bool v_parsed = ParseBool(v, &parse_ok);
+        if(parse_ok){
+            this->_masterMode = v_parsed;
+        }
+    }
+    return retVal;
 }
 
 

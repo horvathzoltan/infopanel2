@@ -1,17 +1,17 @@
-#include "bi/tcpsocketsender.h"
+#include "bi/tcpsocketclient.h"
 #include "helpers/logger.h"
 
 #include <QElapsedTimer>
 #include <QStringList>
 
-TcpSocketSender::TcpSocketSender(const QHostAddress& host, quint16 port)
+TcpSocketClient::TcpSocketClient(const QHostAddress& host, quint16 port)
 {
     _host = host;
     _port = port;
     _socket = new QTcpSocket();
 }
 
-TcpSocketSender::~TcpSocketSender()
+TcpSocketClient::~TcpSocketClient()
 {
     _socket->disconnectFromHost();
     _socket->waitForDisconnected(500);
@@ -20,7 +20,7 @@ TcpSocketSender::~TcpSocketSender()
 
 //https://stackoverflow.com/questions/22930118/how-to-listen-to-a-specific-port-in-qt-using-qtcpsocket
 
-QString TcpSocketSender::Send(const QString &request)
+QString TcpSocketClient::Send(const QString &request)
 {
     QElapsedTimer t;
     t.start();

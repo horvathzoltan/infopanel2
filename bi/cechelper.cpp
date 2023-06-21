@@ -5,7 +5,7 @@
 
 #include <QProcess>
 #include <QApplication>
-
+//cec-client -l
 
 // /bin/sh -c echo "pow 0" | cec-client -s -d 2 /dev/cec1
 int CECHelper::GetPowerState()
@@ -23,6 +23,23 @@ int CECHelper::GetPowerState()
     if(value == "on") return 1;
     return -1;
 }
+
+bool CECHelper::SetPowerState(int v)
+{
+    bool retVal=false;
+    bool valid = v==1 || v==0;
+    if(valid) {
+        const QString CMD_ON = QStringLiteral("echo \"on 0\" | cec-client -s -d 2 /dev/cec1");
+        const QString CMD_OFF = QStringLiteral("echo \"standby 0\" | cec-client -s -d 2 /dev/cec1");
+
+        auto o = ProcessHelper::ShellExecute(v==1?CMD_ON:CMD_OFF);
+        bool ok = o.stdErr.isEmpty() && o.exitCode==0;
+
+        retVal = ok;
+    }
+    return retVal;
+}
+
 
 
 QString CECHelper::GetValue(const QString& str, const QString& token,const QChar& sep){

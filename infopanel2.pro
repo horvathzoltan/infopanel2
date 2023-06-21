@@ -26,9 +26,11 @@ SOURCES += \
     bi/cechelper.cpp \
     bi/mastermode.cpp \
     bi/mode.cpp \
+    bi/processrequest.cpp \
     bi/slavemode.cpp \
-    bi/tcpsocketlistener.cpp \
-    bi/tcpsocketsender.cpp \
+    bi/tcpsocketclient.cpp \
+    bi/tcpsocketserver.cpp \
+    bi/webapihelper.cpp \
     global.cpp \
     helpers/commandlineparserhelper.cpp \
     helpers/downloader.cpp \
@@ -45,15 +47,20 @@ SOURCES += \
     frame2.cpp \
     main.cpp \
     mainwindow.cpp \
-    settings.cpp
+    settings.cpp \
+    webapi/device.cpp \
+    webapi/devicerequest.cpp \
+    webapi/deviceresponse.cpp
 
 HEADERS += \
     bi/cechelper.h \
     bi/mastermode.h \
     bi/mode.h \
+    bi/processrequest.h \
     bi/slavemode.h \
-    bi/tcpsocketlistener.h \
-    bi/tcpsocketsender.h \
+    bi/tcpsocketclient.h \
+    bi/tcpsocketserver.h \
+    bi/webapihelper.h \
     global.h \
     helpers/commandlineparserhelper.h \
     helpers/downloader.h \
@@ -70,7 +77,11 @@ HEADERS += \
     form3.h \
     frame2.h \
     mainwindow.h \
-    settings.h
+    settings.h \
+    webapi/device.h \
+    webapi/devicerequest.h \
+    webapi/deviceresponse.h \
+    webapi/deviceresponsecodes.h
 
 FORMS += \
     form3.ui \
@@ -100,5 +111,8 @@ defined(LIBCEC) {
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /home/pi/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    settings.txt
 
 
