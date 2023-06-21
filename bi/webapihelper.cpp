@@ -21,7 +21,8 @@ curl --location 'https://api.mobileflex.hu/Device' \
  * "comments":"",
  * "applications":null}}
 */
-
+/// "{"resultCode":101,"device":{"deviceId":"macaddress","deviceName":"Teszt gép PI","active":false,"lastDeviceLoginDate":null,"comments":"","applications":null}}"
+/// https://thecodeprogram.com/how-to-use-json-data-with-qt-c--
 void WebApiHelper::GetDevice()
 {
     const QString CMD = QStringLiteral(R"(curl --location 'https://api.mobileflex.hu/Device' --header 'Content-Type: application/json' --data '
