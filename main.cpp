@@ -22,7 +22,7 @@
 /*
     scp 2.jpg pi@172.16.1.17:~/infopanel_pictures
 */
-// git teszt 1 - push teszt 1
+// git teszt 1 - push teszt 2
 
 extern Settings settings;
 
