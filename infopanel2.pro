@@ -24,20 +24,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     bi/cechelper.cpp \
+    bi/constants.cpp \
     bi/mastermode.cpp \
     bi/mode.cpp \
     bi/processrequest.cpp \
     bi/slavemode.cpp \
     bi/tcpsocketclient.cpp \
     bi/tcpsocketserver.cpp \
-    bi/webapihelper.cpp \
+    bi/testmode.cpp \
+    bi/webapimanager.cpp \
     global.cpp \
     helpers/commandlineparserhelper.cpp \
     helpers/downloader.cpp \
     helpers/filenamehelper.cpp \
     helpers/inihelper.cpp \
+    helpers/jsonvaluehelper.cpp \
     helpers/libcechelper.cpp \
     helpers/logger.cpp \
+    helpers/networkhelper.cpp \
     helpers/processhelper.cpp \
     helpers/screenhelper.cpp \
     helpers/shortguid.cpp \
@@ -54,20 +58,25 @@ SOURCES += \
 
 HEADERS += \
     bi/cechelper.h \
+    bi/constants.h \
     bi/mastermode.h \
     bi/mode.h \
     bi/processrequest.h \
     bi/slavemode.h \
     bi/tcpsocketclient.h \
     bi/tcpsocketserver.h \
-    bi/webapihelper.h \
+    bi/testmode.h \
+    bi/webapimanager.h \
     global.h \
     helpers/commandlineparserhelper.h \
     helpers/downloader.h \
     helpers/filenamehelper.h \
     helpers/inihelper.h \
+    helpers/jsonvaluehelper.h \
     helpers/libcechelper.h \
     helpers/logger.h \
+    helpers/nameof.h \
+    helpers/networkhelper.h \
     helpers/processhelper.h \
     helpers/screenhelper.h \
     helpers/shortguid.h \
@@ -91,6 +100,7 @@ FORMS += \
 contains(QMAKESPEC,.*linux-rasp-pi\d*-.*){
     message(rpi)
     CONFIG += rpi
+    DEFINES += RASPBERRY_PI
 }
 
 unix:rpi:{

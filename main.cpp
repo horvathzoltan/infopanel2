@@ -1,7 +1,7 @@
 #include "bi/mode.h"
 #include "bi/mastermode.h"
 #include "bi/slavemode.h"
-
+#include "bi/testmode.h"
 
 #include <QApplication>
 #include <QWindow>
@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
+#include "bi/webapimanager.h"
 #include "helpers/stringify.h"
 #include "helpers/commandlineparserhelper.h"
 #include "helpers/signalhelper.h"
@@ -72,12 +73,16 @@ int main(int argc, char *argv[])
     zInfo("test: "+test);
     zInfo("isMasterMode: " + QString::number(isMasterMode));
 
+    WebApiManager webApiManager(settings.ApiLocation());
+
     SlaveMode *slaveMode=nullptr;
     MasterMode *masterMode=nullptr;
+    TestMode *testMode=nullptr;
+#ifdef RASPBERRY_PI
     if(isMasterMode)
     {
         zInfo("entering MasterMode...");
-        masterMode = new MasterMode();
+        masterMode = new MasterMode(&webApiManager);
         masterMode->Start();
 
         zInfo("Mode: " + QString::number(masterMode->IsMater()));
@@ -85,18 +90,23 @@ int main(int argc, char *argv[])
     else
     {
         zInfo("entering SlaveMode...");
-        slaveMode = new SlaveMode();
+        slaveMode = new SlaveMode(&webApiManager);
         slaveMode->Init();
 
         zInfo("Mode: " + QString::number(slaveMode->IsMater()));
     }
-
+#else
+    zInfo("entering TestMode...");
+    testMode = new TestMode(&webApiManager);
+    testMode->Start();
+#endif
     int e = app.exec();
 
     zInfo("ExitCode: " + QString::number(e));
 
     delete(slaveMode);
     delete(masterMode);
+    delete(testMode);
     return e;
 }
 

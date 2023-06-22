@@ -3,16 +3,17 @@
 #include "helpers/logger.h"
 #include "bi/cechelper.h"
 #include "settings.h"
-#include "webapihelper.h"
+#include "webapimanager.h"
 
 extern Settings settings;
 
-MasterMode::MasterMode(QObject*p): QObject(p), Mode(true)
+MasterMode::MasterMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(true)
 {
+    _webApiManager = webApiManager;
     _timer = new QTimer();
     _timer->connect(_timer, &QTimer::timeout, this,  &MasterMode::On_Timeout);
-    _counter = 0;
-    
+    _counter = 0;    
+
     _tcpSocketSender = new TcpSocketClient(
         settings.SlaveHostAddress(),
         settings.SlavePort());
@@ -28,25 +29,38 @@ MasterMode::~MasterMode()
 
 void  MasterMode::Start()
 {
-    zInfo("starting MasterMode...");
+    bool valid = IsInited();
+    if(valid){
+        zInfo("starting MasterMode...");
 
-    WebApiHelper::GetDevice();
+//        DeviceRequest deviceRequest;
+//        DeviceResponse deviceResponse = _webApiManager->GetDeviceResponse(deviceRequest);
 
-    QString cmd = QStringLiteral("master:started");       
-    QString response = _tcpSocketSender->Send(cmd);
-    zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
+//        //zInfo(QStringLiteral("deviceResponse: ")+deviceResponse.resultCode);
+//        //zInfo(QStringLiteral("deviceName: ")+deviceResponse.device.deviceName);
 
-    _timer->start(5*1000);
+        QString cmd = QStringLiteral("master:started");
+        QString response = _tcpSocketSender->Send(cmd);
+        zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
+        _On_TimeoutGuard=false;
+        _timer->start(5*1000);
+    }
 }
 
-void MasterMode::On_Timeout()
-{
-    zInfo(QStringLiteral("On_Timeout: %1").arg(_counter++));
-    int pow = CECHelper::GetPowerState();
-    QString cmd = QStringLiteral("pow:")+QString::number(pow);
 
-    QString response = _tcpSocketSender->Send(cmd);
-    zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
+
+void MasterMode::On_Timeout()
+{    
+    if(!_On_TimeoutGuard){
+        _On_TimeoutGuard = true;
+        zInfo(QStringLiteral("On_Timeout: %1").arg(_counter++));
+        int pow = CECHelper::GetPowerState();
+        QString cmd = QStringLiteral("pow:")+QString::number(pow);
+
+        QString response = _tcpSocketSender->Send(cmd);
+        zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
+        _On_TimeoutGuard = false;
+    }
 }
 
 

@@ -8,9 +8,10 @@
 
 extern Settings settings;
 
-SlaveMode::SlaveMode(QObject*p): QObject(p), Mode(false)
+SlaveMode::SlaveMode(WebApiManager* webApiManager,
+                     QObject*p): QObject(p), Mode(false)
 {
-
+    _webApiManager = webApiManager;
 }
 
 SlaveMode::~SlaveMode()

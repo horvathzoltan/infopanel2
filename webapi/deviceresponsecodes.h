@@ -12,4 +12,6 @@ enum DeviceResponseCodes:int{
     DeviceInactive,
     DeviceAccessDenied,
 };
+
+
 #endif // DEVICERESPONSECODES_H
