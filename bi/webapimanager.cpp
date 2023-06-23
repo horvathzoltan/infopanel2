@@ -1,10 +1,11 @@
+#include "helpers/logger.h"
+
 #include "webapimanager.h"
-//#include "helpers/logger.h"
 #include "helpers/processhelper.h"
 #include "webapi/devicerequest.h"
-
+#include "webapi/applicationproblem.h"
 #include <QJsonDocument>
-
+#include "helpers/httpresponse.h"
 
 WebApiManager::WebApiManager(const QString &apiLocation)
 {
@@ -35,8 +36,7 @@ curl --location 'https://api.mobileflex.hu/Device' \
 
 //https://curl.se/docs/manpage.html#--stderr
 // curl -i
-//https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html
-//https://www.ietf.org/rfc/rfc2616.txt
+
 
 /*
 Response      = Status-Line               ; Section 6.1
@@ -51,25 +51,53 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 */
 QString WebApiManager::GetServiceUrl(const QString& service, const QString& data)
 {
-    static const QString CMD = QStringLiteral(R"(curl --location '%1/%2' --header 'Content-Type: application/json' --data '%3')");
+    static const QString CMD = QStringLiteral(R"(curl -i --location '%1/%2' --header 'Content-Type: application/json' --data '%3')");
     return CMD.arg(_apiLocation).arg(service).arg(data);
 }
 
-DeviceResponse WebApiManager::GetDeviceResponse(const DeviceRequest& requestModel)
+//https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html
+//https://www.ietf.org/rfc/rfc2616.txt
+//HTTPResponse
+
+bool WebApiManager::TryGetDeviceResponse(const DeviceRequest& requestModel, DeviceResponse* d)
 {
-    QString CMD = GetServiceUrl(QStringLiteral("Device"), requestModel.ToJson());
+    bool retVal = false;
+    bool valid = d!=nullptr;
 
-    DeviceResponse responseModel;
+    QString url = GetServiceUrl(QStringLiteral("Device"), requestModel.ToJson());
 
-    ProcessHelper::Output out = ProcessHelper::ShellExecute(CMD);
-    bool ok = out.stdErr.isEmpty() && out.exitCode==0;
+
+    ProcessHelper::Output out = ProcessHelper::ShellExecute(url);
+
+    bool ok = out.exitCode==0;
     if(ok){
-        QJsonDocument jsonDocument = QJsonDocument::fromJson(out.stdOut.toUtf8());
-        if(jsonDocument.isObject()){
-            QJsonObject jsonObject = jsonDocument.object();
-            responseModel = DeviceResponse::JsonParse(jsonObject);
+        auto httpResponse = HttpResponse::Parse(out.stdOut);
+
+        if(httpResponse.IsSuccessful()){
+            QJsonDocument jsonDocument = QJsonDocument::fromJson(httpResponse.Body().toUtf8());
+            if(jsonDocument.isObject()){
+                QJsonObject jsonObject = jsonDocument.object();
+                *d = DeviceResponse::JsonParse(jsonObject);
+            }
+        }
+        else if(httpResponse.IsClientError()){
+            if(httpResponse.IsContentType("application/problem+json")){
+                QJsonDocument jsonDocument = QJsonDocument::fromJson(out.stdOut.toUtf8());
+                if(jsonDocument.isObject()){
+                    QJsonObject jsonObject = jsonDocument.object();
+                    _lastErr = ApplicationProblem::JsonParse(jsonObject);
+                }
+                else{
+                    _lastErr =  ApplicationProblem();//notjson
+                }
+            } else{
+                _lastErr =  ApplicationProblem();// not approblem application/problem+json
+            }
+        }
+        else{
+            _lastErr = ApplicationProblem();// other error
         }
     }
 
-    return responseModel;
+    return retVal;
 }

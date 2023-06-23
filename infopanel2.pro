@@ -37,10 +37,12 @@ SOURCES += \
     helpers/commandlineparserhelper.cpp \
     helpers/downloader.cpp \
     helpers/filenamehelper.cpp \
+    helpers/httpresponse.cpp \
     helpers/inihelper.cpp \
     helpers/jsonvaluehelper.cpp \
     helpers/libcechelper.cpp \
     helpers/logger.cpp \
+    helpers/nameof.cpp \
     helpers/networkhelper.cpp \
     helpers/processhelper.cpp \
     helpers/screenhelper.cpp \
@@ -52,6 +54,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     settings.cpp \
+    webapi/applicationproblem.cpp \
     webapi/device.cpp \
     webapi/devicerequest.cpp \
     webapi/deviceresponse.cpp
@@ -71,6 +74,7 @@ HEADERS += \
     helpers/commandlineparserhelper.h \
     helpers/downloader.h \
     helpers/filenamehelper.h \
+    helpers/httpresponse.h \
     helpers/inihelper.h \
     helpers/jsonvaluehelper.h \
     helpers/libcechelper.h \
@@ -87,6 +91,7 @@ HEADERS += \
     frame2.h \
     mainwindow.h \
     settings.h \
+    webapi/applicationproblem.h \
     webapi/device.h \
     webapi/devicerequest.h \
     webapi/deviceresponse.h \

@@ -26,7 +26,8 @@ void TestMode::Start()
             constants.MobileFlexGuid(),
             constants.DeviceId(),
             settings.DeviceName());
-        DeviceResponse deviceResponse = _webApiManager->GetDeviceResponse(deviceRequest);
+        DeviceResponse deviceResponse;
+        bool ok = _webApiManager->TryGetDeviceResponse(deviceRequest, &deviceResponse);
 
         zInfo(QStringLiteral("deviceResponse: ")+QString::number(deviceResponse.resultCode));
         zInfo(QStringLiteral("deviceName: ")+deviceResponse.device.deviceName);
