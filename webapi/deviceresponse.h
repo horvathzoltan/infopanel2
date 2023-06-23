@@ -6,7 +6,7 @@
 
 class DeviceResponse
 {
-private:
+public:
     /// <summary>
     /// The result code of the webapi call for the device
     /// </summary>
@@ -16,9 +16,11 @@ private:
     /// If the device query was successfull then the primary key of the device
     /// This can be used laster to query the device object
     /// </summary>
-    Device _Device;// { get; set; } = null;
+    Device device;// { get; set; } = null;
 public:
     DeviceResponse();
+
+    static DeviceResponse JsonParse(const QJsonObject& o);
 };
 
 #endif // DEVICERESPONSE_H

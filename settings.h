@@ -11,6 +11,8 @@ private:
     QHostAddress _slaveHostAddress;
     qint16 _slavePort=8081;
     bool _slaveFullSize = false;
+    QString _apiLocation = QStringLiteral("https://api.mobileflex.hu");
+    QString _deviceName = QStringLiteral("deviceName");
 
     static bool ParseMaster(const QString& v, bool *ok);
     static bool ParseBool(const QString& v, bool *ok);
@@ -27,6 +29,8 @@ public:
     qint16 SlavePort(){return _slavePort;}
     bool MasterMode(){return _masterMode;}
     bool SlaveFullSize(){return _slaveFullSize;}
+    QString ApiLocation(){return _apiLocation;}
+    QString DeviceName(){return _deviceName;}
 };
 
 #endif // SETTINGS_H
