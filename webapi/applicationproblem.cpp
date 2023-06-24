@@ -1,7 +1,8 @@
 #include "applicationproblem.h"
 #include "helpers/nameof.h"
 #include "helpers/jsonvaluehelper.h"
-
+#include <QVariantMap>
+#include <QJsonDocument>
 
 ApplicationProblem::ApplicationProblem()
 {
@@ -44,10 +45,86 @@ ApplicationProblem ApplicationProblem::JsonParse(const QJsonObject &o)
                           key != nameof_status &&
                           key != nameof_detail &&
                           key != nameof_detail;
-        if(unknownKey){
-            d._fields.insert(key, o.value(key).toString());
+        if(unknownKey && !o.isEmpty()){
+            auto jsonValue = o.value(key);//.toString();
+
+            if(jsonValue.isObject()){
+//                auto m = jsonValue.toVariant();
+//                d._fields.insert(key, m);
+//            } else if(jsonValue.isArray()){
+//                auto m = jsonValue.toVariant();
+//                d._fields.insert(key, m);
+//            }else{
+                QVariant var = jsonValue.toVariant();
+                d._fields.insert(key, var);
+            }
         }
     }
 
     return d;
 }
+
+QStringList ApplicationProblem::GetErrors()
+{
+    QStringList retVal;
+    QVariant value;
+    if(_fields.contains("error")){
+        value = _fields.value("error");
+    } else if(_fields.contains("errors")){
+        value = _fields.value("errors");
+    }
+
+    QVariant::Type t = value.type();
+    if(t == QVariant::Map)
+    {
+        QMap<QString, QVariant> map = value.toMap();
+        auto keys = map.keys();
+        for (QVariant &a : map) {
+            auto tt = a.type();
+            if(tt == QVariant::List){
+                retVal.append(a.toStringList());
+            } else{
+                retVal.append(a.toString());
+            }
+        }
+    } else{
+         retVal.append(value.toString());
+    }
+    return retVal;
+}
+
+QStringList ApplicationProblem::ErrorHandler(const QString& err){
+    QStringList retVal;
+
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(err.toUtf8());
+    bool isJsonObject = jsonDocument.isObject();
+    if (isJsonObject) {
+        QJsonObject jsonObject = jsonDocument.object();
+        ApplicationProblem _lastErr = ApplicationProblem::JsonParse(jsonObject);
+        retVal = _lastErr.GetErrors();
+    }
+    else{
+        retVal.append(err);
+    }
+    return retVal;
+}
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/

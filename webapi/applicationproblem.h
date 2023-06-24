@@ -12,13 +12,16 @@ private:
     int status;
     QString detail;
     QString instance;
-    QMap<QString, QString> _fields;
+    QMap<QString, QVariant> _fields;
 public:
     ApplicationProblem();
 
     static ApplicationProblem JsonParse(const QJsonObject& o);
 
-    const QString& Title(){return title;}
+    QString Title(){return title;}
+
+    QStringList GetErrors();
+    static QStringList ErrorHandler(const QString &err);
 };
 
 #endif // APPLICATIONPROBLEM_H

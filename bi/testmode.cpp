@@ -22,14 +22,20 @@ void TestMode::Start()
     if(valid){
         zInfo("starting TestMode...");
 
+        QString deviceId = constants.IsTestMode()?"pub1":constants.DeviceId();
+
         DeviceRequest deviceRequest(
             constants.MobileFlexGuid(),
-            constants.DeviceId(),
+            deviceId,
             settings.DeviceName());
+
         DeviceResponse deviceResponse;
         bool ok = _webApiManager->TryGetDeviceResponse(deviceRequest, &deviceResponse);
-
-        zInfo(QStringLiteral("deviceResponse: ")+QString::number(deviceResponse.resultCode));
-        zInfo(QStringLiteral("deviceName: ")+deviceResponse.device.deviceName);
+        if(ok){
+            zInfo(QStringLiteral("deviceResponse: ")+QString::number(deviceResponse.resultCode));
+            zInfo(QStringLiteral("deviceName: ")+deviceResponse.device.deviceName);
+        }else{
+            zInfo(_webApiManager->ErrorMessage());
+        }
     }
 }
