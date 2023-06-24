@@ -10,7 +10,7 @@ enum DeviceResponseCodes:int{
     DataServiceInstanceDoesNotExist,
     DeviceDoesNotExists = 100,
     DeviceInactive,
-    DeviceAccessDenied,
+    DeviceAccessDenied
 };
 
 

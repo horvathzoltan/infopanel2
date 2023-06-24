@@ -16,7 +16,7 @@ public:
     /// If the device query was successfull then the primary key of the device
     /// This can be used laster to query the device object
     /// </summary>
-    Device device;// { get; set; } = null;
+    Device device;
 public:
     DeviceResponse();
 
