@@ -1,8 +1,8 @@
 #ifndef DEVICERESPONSE_H
 #define DEVICERESPONSE_H
 
-#include "deviceresponsecodes.h"
-#include "device.h"
+#include "webapi/enums/deviceresponsecodes.h"
+#include "webapi/device.h"
 
 class DeviceResponse
 {
@@ -17,9 +17,9 @@ public:
     /// This can be used laster to query the device object
     /// </summary>
     Device device;
+
 public:
     DeviceResponse();
-
     static DeviceResponse JsonParse(const QJsonObject& o);
 };
 

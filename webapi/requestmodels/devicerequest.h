@@ -3,8 +3,6 @@
 
 #include <QUuid>
 
-
-
 class DeviceRequest
 {
 private:
