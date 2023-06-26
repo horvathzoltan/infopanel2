@@ -3,6 +3,7 @@
 
 #include "pubimageitem.h"
 
+#include <QJsonObject>
 #include <QList>
 #include <QString>
 
@@ -22,6 +23,8 @@ public:
 
 public:
     PubApplicationData();
+
+    static PubApplicationData JsonParse(const QJsonObject& o);
 };
 
 #endif // PUBAPPLICATIONDATA_H

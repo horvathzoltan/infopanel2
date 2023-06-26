@@ -1,9 +1,11 @@
 #ifndef PUBAPPLICATIONDATARESPONSE_H
 #define PUBAPPLICATIONDATARESPONSE_H
 
-
 #include "webapi/pubapplicationdata.h"
-#include "webapi/pubapplicationdataresponsecodes.h"
+#include "webapi/enums/pubapplicationdataresponsecodes.h"
+
+#include <QJsonObject>
+
 class PubApplicationDataResponse
 {
     /// <summary>
@@ -18,6 +20,8 @@ class PubApplicationDataResponse
 
 public:
     PubApplicationDataResponse();
+
+    static PubApplicationDataResponse JsonParse(const QJsonObject& o);
 };
 
 #endif // PUBAPPLICATIONDATARESPONSE_H

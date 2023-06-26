@@ -35,7 +35,11 @@ public:
     QString applicationDataVersion;// { get; set; } = string.Empty;
 
 public:
-    DeviceAliveRequest();
+    DeviceAliveRequest(QUuid _id,
+                       const QString& _deviceId,
+                       const QUuid& _applicationId);
+
+    QString ToJson() const;
 };
 
 #endif // DEVICEALIVEREQUEST_H

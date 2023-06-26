@@ -2,7 +2,7 @@
 
 #include "webapimanager.h"
 #include "helpers/processhelper.h"
-#include "webapi/devicerequest.h"
+#include "webapi/requestmodels/devicerequest.h"
 #include "webapi/applicationproblem.h"
 #include <QJsonDocument>
 #include "helpers/httpresponse.h"
@@ -47,7 +47,7 @@ ERROR:
   }
 }
 */
-/// "{"resultCode":101,"device":{"deviceId":"macaddress","deviceName":"Teszt gép PI","active":false,"lastDeviceLoginDate":null,"comments":"","applications":null}}"
+/// {"resultCode":101,"device":{"deviceId":"macaddress","deviceName":"Teszt gép PI","active":false,"lastDeviceLoginDate":null,"comments":"","applications":null}}
 /// https://thecodeprogram.com/how-to-use-json-data-with-qt-c--
 
 //https://curl.se/docs/manpage.html#--stderr
@@ -65,10 +65,10 @@ Response      = Status-Line               ; Section 6.1
 
 Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 */
-QString WebApiManager::GetServiceUrl(const QString& service, const QString& data)
+QString WebApiManager::GetServiceCommand(const QString& service, const QString& data)
 {
     static const QString CMD = QStringLiteral(R"(curl -i --location '%1/%2' --header 'Content-Type: application/json' --data '%3')");
-    return CMD.arg(_apiLocation).arg(service).arg(data);
+    return CMD.arg(_apiLocation,service,data);
 }
 
 //https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html
@@ -83,34 +83,16 @@ bool WebApiManager::TryGetDeviceResponse(const DeviceRequest& requestModel, Devi
         _lastErr.clear();
         _lastErrCode = 0;
 
-        QString url = GetServiceUrl(QStringLiteral("Device"), requestModel.ToJson());
+        QString cmd = GetServiceCommand(QStringLiteral("Device"), requestModel.ToJson());
 
-        ProcessHelper::Output out = ProcessHelper::ShellExecute(url);
+        ProcessHelper::Output out = ProcessHelper::ShellExecute(cmd);
 
-        bool ok = out.exitCode==0;
+//        QString res0 = QStringLiteral(R"({"resultCode":101,"device":{"deviceId":"macaddress","deviceName":"Teszt gép PI","active":false,"lastDeviceLoginDate":null,"comments":"","applications":%1}})")
+//                        .arg(QStringLiteral(R"([{"id":"f83c031c-92ea-4f0c-8240-13427ea088a2","applicationName":"majom1"},{"id":"f83c031c-92ea-4f0c-8240-13427ea088a3","applicationName":"majom2"}])"));//
+
+        bool ok = out.exitCode==0;        
         if(ok){
-            auto httpResponse = HttpResponse::Parse(out.stdOut);
-
-            if(httpResponse.IsSuccessful()){
-                QJsonDocument jsonDocument = QJsonDocument::fromJson(httpResponse.Body().toUtf8());
-                if(jsonDocument.isObject()){
-                    QJsonObject jsonObject = jsonDocument.object();
-                    *d = DeviceResponse::JsonParse(jsonObject);
-                    retVal = true;
-                }
-            }
-            else if(httpResponse.IsClientError()){
-                if(httpResponse.IsContentType("application/problem+json")){
-                    auto errors = ApplicationProblem::ErrorHandler(httpResponse.Body());
-                    _lastErr = errors.join('\n');
-                } else {
-                    _lastErr = httpResponse.Body();// not approblem application/problem+json
-                }
-            }
-            else{
-                _lastErr = _lastErr = httpResponse.Body();// other error
-            }
-            _lastErrCode = httpResponse.StatusCode();
+            retVal = HandleResponse<DeviceResponse>(out.stdOut, d, &_lastErr, &_lastErrCode);
         } else{
             _lastErrCode = out.exitCode;
             _lastErr = out.ToString();

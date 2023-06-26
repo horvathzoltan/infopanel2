@@ -22,7 +22,7 @@ void TestMode::Start()
     if(valid){
         zInfo("starting TestMode...");
 
-        QString deviceId = constants.IsTestMode()?"pub1":constants.DeviceId();
+        QString deviceId = constants.IsTestMode()?"dca6327492ab":constants.DeviceId();
 
         DeviceRequest deviceRequest(
             constants.MobileFlexGuid(),

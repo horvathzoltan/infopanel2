@@ -6,7 +6,8 @@
 class NetworkHelper
 {
 public:
-    static QString hwid_ethernet();
+    static QString mac_ethernet();
+    static QString HwId();
 };
 
 #endif // NETWORKHELPER_H

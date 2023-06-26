@@ -29,7 +29,7 @@ QString DeviceRequest::ToJson() const
 
     QJsonDocument jsonDoc;
     jsonDoc.setObject(o);
-    QString str = jsonDoc.toJson();
+    QString str = jsonDoc.toJson(QJsonDocument::JsonFormat::Compact);
 
     return str;
 }

@@ -1,9 +1,8 @@
 #ifndef PUBIMAGEITEM_H
 #define PUBIMAGEITEM_H
 
+#include <QJsonObject>
 #include <QUuid>
-
-
 
 class PubImageItem
 {
@@ -25,6 +24,7 @@ public:
 
 public:
     PubImageItem();
-};
 
+    static PubImageItem JsonParse(const QJsonObject &jsonObject);
+};
 #endif // PUBIMAGEITEM_H

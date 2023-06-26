@@ -1,7 +1,9 @@
 #ifndef DEVICEALIVERESPONSE_H
 #define DEVICEALIVERESPONSE_H
 
-#include "devicealiveresponsecodes.h"
+#include "webapi/enums/devicealiveresponsecodes.h"
+
+#include <QJsonObject>
 
 class DeviceAliveResponse
 {
@@ -13,6 +15,8 @@ public:
 
 public:
     DeviceAliveResponse();
+
+    static DeviceAliveResponse JsonParse(const QJsonObject& o);
 };
 
 #endif // DEVICEALIVERESPONSE_H

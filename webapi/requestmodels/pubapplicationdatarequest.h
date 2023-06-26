@@ -3,8 +3,6 @@
 
 #include <QUuid>
 
-
-
 class PubApplicationDataRequest
 {
 public:
@@ -25,7 +23,11 @@ public:
     QUuid applicationId;// { get; set; }
 
 public:
-    PubApplicationDataRequest();
+    PubApplicationDataRequest(QUuid _id,
+                              const QString& _deviceId,
+                              const QUuid& _applicationId);
+
+    QString ToJson() const;
 };
 
 #endif // PUBAPPLICATIONDATAREQUEST_H
