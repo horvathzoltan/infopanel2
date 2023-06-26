@@ -1,8 +1,8 @@
 #ifndef DEVICERESPONSE_H
 #define DEVICERESPONSE_H
 
-#include "deviceresponsecodes.h"
-#include "device.h"
+#include "webapi/enums/deviceresponsecodes.h"
+#include "webapi/device.h"
 
 class DeviceResponse
 {
@@ -16,10 +16,10 @@ public:
     /// If the device query was successfull then the primary key of the device
     /// This can be used laster to query the device object
     /// </summary>
-    Device device;// { get; set; } = null;
+    Device device;
+
 public:
     DeviceResponse();
-
     static DeviceResponse JsonParse(const QJsonObject& o);
 };
 

@@ -54,10 +54,18 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     settings.cpp \
+    webapi/application.cpp \
     webapi/applicationproblem.cpp \
+    webapi/applicationtheme.cpp \
     webapi/device.cpp \
-    webapi/devicerequest.cpp \
-    webapi/deviceresponse.cpp
+    webapi/requestmodels/devicealiverequest.cpp \
+    webapi/responsemodels/devicealiveresponse.cpp \
+    webapi/requestmodels/devicerequest.cpp \
+    webapi/responsemodels/deviceresponse.cpp \
+    webapi/pubapplicationdata.cpp \
+    webapi/requestmodels/pubapplicationdatarequest.cpp \
+    webapi/responsemodels/pubapplicationdataresponse.cpp \
+    webapi/pubimageitem.cpp
 
 HEADERS += \
     bi/cechelper.h \
@@ -91,11 +99,22 @@ HEADERS += \
     frame2.h \
     mainwindow.h \
     settings.h \
+    webapi/application.h \
     webapi/applicationproblem.h \
+    webapi/applicationtheme.h \
     webapi/device.h \
-    webapi/devicerequest.h \
-    webapi/deviceresponse.h \
-    webapi/deviceresponsecodes.h
+    webapi/requestmodels/devicealiverequest.h \
+    webapi/responsemodels/devicealiveresponse.h \
+    webapi/enums/devicealiveresponsecodes.h \
+    webapi/requestmodels/devicerequest.h \
+    webapi/responsemodels/deviceresponse.h \
+    webapi/enums/deviceresponsecodes.h \
+    webapi/loginmodes.h \
+    webapi/pubapplicationdata.h \
+    webapi/requestmodels/pubapplicationdatarequest.h \
+    webapi/responsemodels/pubapplicationdataresponse.h \
+    webapi/enums/pubapplicationdataresponsecodes.h \
+    webapi/pubimageitem.h
 
 FORMS += \
     form3.ui \

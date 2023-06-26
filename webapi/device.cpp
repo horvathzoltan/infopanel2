@@ -2,6 +2,8 @@
 #include "helpers/nameof.h"
 #include "helpers/jsonvaluehelper.h"
 
+#include <QJsonArray>
+
 Device::Device()
 {
 
@@ -36,7 +38,11 @@ Device Device::JsonParse(const QJsonObject &device)
     if(ok) d.comments=v.toString();
 
     ok = JsonValueHelper::TryGetVariant(device, nameof_applications, &v);
-    if(ok) d.applications=v.toString();
+
+    QJsonArray deviceArray = device.value(nameof_applications).toArray();
+    d.applications = Application::JsonParse(deviceArray);
+
+    //if(ok) d.applications=v.toString();
 
     return d;
 }

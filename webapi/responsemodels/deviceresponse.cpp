@@ -1,5 +1,5 @@
 #include "deviceresponse.h"
-
+#include "helpers/nameof.h"
 #include "helpers/jsonvaluehelper.h"
 
 DeviceResponse::DeviceResponse()
@@ -13,7 +13,10 @@ DeviceResponse DeviceResponse::JsonParse(const QJsonObject &o)
     QVariant v;
     bool ok;
 
-    ok = JsonValueHelper::TryGetVariant(o, "resultCode", &v);
+    static const QString nameof_resultCode = nameof(resultCode);
+    static const QString nameof_device = nameof(device);
+
+    ok = JsonValueHelper::TryGetVariant(o, nameof_resultCode, &v);
     if(ok){
         bool ok2;
         int i = v.toInt(&ok2);
@@ -22,7 +25,7 @@ DeviceResponse DeviceResponse::JsonParse(const QJsonObject &o)
         }
     }
 
-    QJsonObject deviceObj = o.value("device").toObject();
+    QJsonObject deviceObj = o.value(nameof_device).toObject();
     d.device = Device::JsonParse(deviceObj);
     return d;
 }

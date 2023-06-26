@@ -30,6 +30,22 @@ curl --location 'https://api.mobileflex.hu/Device' \
 "lastDeviceLoginDate":null,
 "comments":"",
 "applications":null}}
+
+ERROR:
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "traceId": "00-d6eacd6cee8a6f131f5db2fb586de5ee-d82f3f34514497ae-00",
+  "errors": {
+    "deviceRequest": [
+      "The deviceRequest field is required."
+    ],
+    "$.id": [
+      "The JSON value could not be converted to System.Guid. Path: $.id | LineNumber: 1 | BytePositionInLine: 49."
+    ]
+  }
+}
 */
 /// "{"resultCode":101,"device":{"deviceId":"macaddress","deviceName":"Teszt gép PI","active":false,"lastDeviceLoginDate":null,"comments":"","applications":null}}"
 /// https://thecodeprogram.com/how-to-use-json-data-with-qt-c--
@@ -63,41 +79,52 @@ bool WebApiManager::TryGetDeviceResponse(const DeviceRequest& requestModel, Devi
 {
     bool retVal = false;
     bool valid = d!=nullptr;
+    if(valid){
+        _lastErr.clear();
+        _lastErrCode = 0;
 
-    QString url = GetServiceUrl(QStringLiteral("Device"), requestModel.ToJson());
+        QString url = GetServiceUrl(QStringLiteral("Device"), requestModel.ToJson());
 
+        ProcessHelper::Output out = ProcessHelper::ShellExecute(url);
 
-    ProcessHelper::Output out = ProcessHelper::ShellExecute(url);
+        bool ok = out.exitCode==0;
+        if(ok){
+            auto httpResponse = HttpResponse::Parse(out.stdOut);
 
-    bool ok = out.exitCode==0;
-    if(ok){
-        auto httpResponse = HttpResponse::Parse(out.stdOut);
-
-        if(httpResponse.IsSuccessful()){
-            QJsonDocument jsonDocument = QJsonDocument::fromJson(httpResponse.Body().toUtf8());
-            if(jsonDocument.isObject()){
-                QJsonObject jsonObject = jsonDocument.object();
-                *d = DeviceResponse::JsonParse(jsonObject);
-            }
-        }
-        else if(httpResponse.IsClientError()){
-            if(httpResponse.IsContentType("application/problem+json")){
-                QJsonDocument jsonDocument = QJsonDocument::fromJson(out.stdOut.toUtf8());
+            if(httpResponse.IsSuccessful()){
+                QJsonDocument jsonDocument = QJsonDocument::fromJson(httpResponse.Body().toUtf8());
                 if(jsonDocument.isObject()){
                     QJsonObject jsonObject = jsonDocument.object();
-                    _lastErr = ApplicationProblem::JsonParse(jsonObject);
+                    *d = DeviceResponse::JsonParse(jsonObject);
+                    retVal = true;
                 }
-                else{
-                    _lastErr =  ApplicationProblem();//notjson
-                }
-            } else{
-                _lastErr =  ApplicationProblem();// not approblem application/problem+json
             }
+            else if(httpResponse.IsClientError()){
+                if(httpResponse.IsContentType("application/problem+json")){
+                    auto errors = ApplicationProblem::ErrorHandler(httpResponse.Body());
+                    _lastErr = errors.join('\n');
+                } else {
+                    _lastErr = httpResponse.Body();// not approblem application/problem+json
+                }
+            }
+            else{
+                _lastErr = _lastErr = httpResponse.Body();// other error
+            }
+            _lastErrCode = httpResponse.StatusCode();
+        } else{
+            _lastErrCode = out.exitCode;
+            _lastErr = out.ToString();
         }
-        else{
-            _lastErr = ApplicationProblem();// other error
-        }
+    } else{
+        _lastErr=QStringLiteral("invalid call");
+        _lastErrCode = -1;
     }
-
     return retVal;
+}
+
+QString WebApiManager::ErrorMessage()
+{
+    return QStringLiteral("error(%1): %2")
+        .arg(_lastErrCode)
+        .arg(_lastErr);
 }

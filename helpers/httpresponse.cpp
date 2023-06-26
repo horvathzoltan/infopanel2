@@ -85,9 +85,14 @@ HttpResponse HttpResponse::Parse(const QString &str)
 bool HttpResponse::IsContentType(const QString &c)
 {
     bool retVal = false;
-    const QString key = QStringLiteral("Content-Type");
+    const QString key = QStringLiteral("content-type");
     if(_headerFields.contains(key)){
-        if(_headerFields.value(key) == c){
+        auto v = _headerFields.value(key);
+        int ix = v.indexOf(';');
+        QString value = (ix>=0)?c.left(ix):c;
+
+        bool equals = value.compare(c, Qt::CaseInsensitive) == 0;
+        if(equals){
             retVal = true;
         }
     }
@@ -101,7 +106,7 @@ bool HttpResponse::TryParseHeaderLine(const QString &str, QPair<QString, QString
     if(valid){
         int ix = str.indexOf(':');
         if(ix>1){
-            p->first = str.left(ix).trimmed();
+            p->first = str.left(ix).trimmed().toLower();
             p->second = str.mid(ix+1).trimmed();
             retVal = true;
         }
@@ -125,3 +130,4 @@ HttpResponse::Status HttpResponse::Status::Parse(const QString &str)
     }
     return s;
 }
+

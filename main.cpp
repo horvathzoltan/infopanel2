@@ -18,13 +18,14 @@
 #include "helpers/filenamehelper.h"
 
 #include "settings.h"
-
+#include "bi/constants.h"
 
 /*
     scp 2.jpg pi@172.16.1.17:~/infopanel_pictures
 */
 
 extern Settings settings;
+extern Constants constants;
 
 
 int main(int argc, char *argv[])
@@ -97,6 +98,7 @@ int main(int argc, char *argv[])
     }
 #else
     zInfo("entering TestMode...");
+    constants.SetTestMode(true);
     testMode = new TestMode(&webApiManager);
     testMode->Start();
 #endif

@@ -23,7 +23,7 @@ QString DeviceRequest::ToJson() const
     static const QString nameof_deviceId = nameof(deviceId);
     static const QString nameof_deviceName = nameof(deviceName);
 
-    o.insert(nameof_id, id.toString(QUuid::WithoutBraces)+"}");
+    o.insert(nameof_id, id.toString(QUuid::WithoutBraces));
     o.insert(nameof_deviceId, deviceId);
     o.insert(nameof_deviceName, deviceName);
 
