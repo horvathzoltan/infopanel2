@@ -22,9 +22,9 @@ private:
     WebApiManager *_webApiManager;
 public:    
     MasterMode(WebApiManager* webApiManager, QObject* p = nullptr);
-    ~MasterMode();    
+    ~MasterMode();
 
-    void Start();
+    bool Start();
     void On_Timeout();
 };
 

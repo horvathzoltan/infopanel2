@@ -1,10 +1,10 @@
-#include "devicealiverequest.h"
+#include "devicealiverequestmodel.h"
 #include "helpers/nameof.h"
 
 #include <QJsonObject>
 #include <QJsonDocument>
 
-DeviceAliveRequest::DeviceAliveRequest(QUuid _id,
+DeviceAliveRequestModel::DeviceAliveRequestModel(QUuid _id,
                                        const QString& _deviceId,
                                        const QUuid& _applicationId)
 {
@@ -13,7 +13,7 @@ DeviceAliveRequest::DeviceAliveRequest(QUuid _id,
     applicationId = _applicationId;
 }
 
-QString DeviceAliveRequest::ToJson() const
+QString DeviceAliveRequestModel::ToJson() const
 {
     QJsonObject o;
 

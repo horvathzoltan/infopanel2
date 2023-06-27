@@ -1,9 +1,11 @@
-#ifndef PUBAPPLICATIONDATAREQUEST_H
-#define PUBAPPLICATIONDATAREQUEST_H
+#ifndef DEVICEALIVEREQUESTMODEL_H
+#define DEVICEALIVEREQUESTMODEL_H
 
 #include <QUuid>
 
-class PubApplicationDataRequest
+
+
+class DeviceAliveRequestModel
 {
 public:
     /// <summary>
@@ -22,12 +24,22 @@ public:
     /// </summary>
     QUuid applicationId;// { get; set; }
 
+    /// <summary>
+    /// version number of the application currently in use
+    /// </summary>
+    QString applicationVersion;// { get; set; } = string.Empty;
+
+    /// <summary>
+    /// version number of the data, which is currently in use
+    /// </summary>
+    QString applicationDataVersion;// { get; set; } = string.Empty;
+
 public:
-    PubApplicationDataRequest(QUuid _id,
-                              const QString& _deviceId,
-                              const QUuid& _applicationId);
+    DeviceAliveRequestModel(QUuid _id,
+                       const QString& _deviceId,
+                       const QUuid& _applicationId);
 
     QString ToJson() const;
 };
 
-#endif // PUBAPPLICATIONDATAREQUEST_H
+#endif // DEVICEALIVEREQUESTMODEL_H

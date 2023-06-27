@@ -1,10 +1,10 @@
-#include "pubapplicationdatarequest.h"
+#include "pubapplicationdatarequestmodel.h"
 #include "helpers/nameof.h"
 
 #include <QJsonObject>
 #include <QJsonDocument>
 
-PubApplicationDataRequest::PubApplicationDataRequest(QUuid _id,
+PubApplicationDataRequestModel::PubApplicationDataRequestModel(QUuid _id,
                                                      const QString& _deviceId,
                                                      const QUuid& _applicationId)
 {
@@ -13,7 +13,7 @@ PubApplicationDataRequest::PubApplicationDataRequest(QUuid _id,
     applicationId = _applicationId;
 }
 
-QString PubApplicationDataRequest::ToJson() const
+QString PubApplicationDataRequestModel::ToJson() const
 {
     QJsonObject o;
 

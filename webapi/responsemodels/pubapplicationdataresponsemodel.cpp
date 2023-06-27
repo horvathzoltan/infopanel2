@@ -1,15 +1,15 @@
-#include "webapi/responsemodels/pubapplicationdataresponse.h"
+#include "webapi/responsemodels/pubapplicationdataresponsemodel.h"
 #include "helpers/nameof.h"
 #include "helpers/jsonvaluehelper.h"
 
-PubApplicationDataResponse::PubApplicationDataResponse()
+PubApplicationDataResponseModel::PubApplicationDataResponseModel()
 {
 
 }
 
-PubApplicationDataResponse PubApplicationDataResponse::JsonParse(const QJsonObject &o)
+PubApplicationDataResponseModel PubApplicationDataResponseModel::JsonParse(const QJsonObject &o)
 {
-    PubApplicationDataResponse d;
+    PubApplicationDataResponseModel d;
     QVariant v;
     bool ok;
 
@@ -21,7 +21,7 @@ PubApplicationDataResponse PubApplicationDataResponse::JsonParse(const QJsonObje
         bool ok2;
         int i = v.toInt(&ok2);
         if(ok2){
-            d.resultCode=static_cast<PubApplicationDataResponseCodes>(i);
+            d.resultCode=static_cast<PubApplicationDataResponseModel::Codes>(i);
         }
     }
 

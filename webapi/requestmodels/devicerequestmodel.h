@@ -1,9 +1,9 @@
-#ifndef DEVICEREQUEST_H
-#define DEVICEREQUEST_H
+#ifndef DEVICEREQUESTMODEL_H
+#define DEVICEREQUESTMODEL_H
 
 #include <QUuid>
 
-class DeviceRequest
+class DeviceRequestModel
 {
 private:
 
@@ -24,11 +24,11 @@ private:
     QString deviceName;
 
 public:
-    DeviceRequest(QUuid _id,
+    DeviceRequestModel(QUuid _id,
                   const QString& _deviceId,
                   const QString& _deviceName);
 
     QString ToJson() const;
 };
 
-#endif // DEVICEREQUEST_H
+#endif // DEVICEREQUESTMODEL_H
