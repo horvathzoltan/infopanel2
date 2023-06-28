@@ -1,4 +1,4 @@
-#include "devicerequest.h"
+#include "devicerequestmodel.h"
 #include "helpers/nameof.h"
 
 #include <QJsonObject>
@@ -6,7 +6,7 @@
 
 QString MetaHelper_GetRowName(const QString &n);
 
-DeviceRequest::DeviceRequest(QUuid _id,
+DeviceRequestModel::DeviceRequestModel(QUuid _id,
                              const QString& _deviceId,
                              const QString& _deviceName)
 {    
@@ -15,7 +15,7 @@ DeviceRequest::DeviceRequest(QUuid _id,
     deviceName = _deviceName;
 }
 
-QString DeviceRequest::ToJson() const
+QString DeviceRequestModel::ToJson() const
 {
     QJsonObject o;
 
@@ -29,7 +29,7 @@ QString DeviceRequest::ToJson() const
 
     QJsonDocument jsonDoc;
     jsonDoc.setObject(o);
-    QString str = jsonDoc.toJson();
+    QString str = jsonDoc.toJson(QJsonDocument::JsonFormat::Compact);
 
     return str;
 }

@@ -104,7 +104,7 @@ public:
 public:
     Application();
 
-    static QList<Application> JsonParse(QJsonArray applicationArray);
+    static Application JsonParse(const QJsonObject &jsonObject);
 };
 
 #endif // APPLICATION_H

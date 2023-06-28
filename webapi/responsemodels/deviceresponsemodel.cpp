@@ -1,15 +1,15 @@
-#include "deviceresponse.h"
+#include "deviceresponsemodel.h"
 #include "helpers/nameof.h"
 #include "helpers/jsonvaluehelper.h"
 
-DeviceResponse::DeviceResponse()
+DeviceResponseModel::DeviceResponseModel()
 {
 
 }
 
-DeviceResponse DeviceResponse::JsonParse(const QJsonObject &o)
+DeviceResponseModel DeviceResponseModel::JsonParse(const QJsonObject &o)
 {
-    DeviceResponse d;
+    DeviceResponseModel d;
     QVariant v;
     bool ok;
 
@@ -17,17 +17,19 @@ DeviceResponse DeviceResponse::JsonParse(const QJsonObject &o)
     static const QString nameof_device = nameof(device);
 
     ok = JsonValueHelper::TryGetVariant(o, nameof_resultCode, &v);
-    if(ok){
-        bool ok2;
-        int i = v.toInt(&ok2);
-        if(ok2){
-            d.resultCode=static_cast<DeviceResponseCodes>(i);
-        }
-    }
+    JsonValueHelper::TryGetEnum(v, &d.resultCode);
 
     QJsonObject deviceObj = o.value(nameof_device).toObject();
     d.device = Device::JsonParse(deviceObj);
     return d;
+}
+
+const Application* DeviceResponseModel::GetApplication(QUuid id) const
+{
+    for(auto&a:this->device.applications){
+        if (a.id == id) return &a;
+    }
+    return nullptr;
 }
 
 

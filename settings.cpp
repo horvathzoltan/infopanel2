@@ -21,6 +21,7 @@ bool Settings::Load(const QString &fn)
             Settings::Parse_slavePort(m);
             Settings::Parse_slaveHostAddress(m);
             Settings::Parse_slaveFullSize(m);
+            Settings::Parse_downloadDirectory(m);
         }
     }
     return false;
@@ -122,3 +123,15 @@ bool Settings::Parse_slaveHostAddress(const QMap<QString, QString>& m){
     }
     return retVal;
 }
+
+bool Settings::Parse_downloadDirectory(const QMap<QString, QString>& m){
+    bool retVal=false;
+    QString v = "";
+    bool ok = IniHelper::TryGetValue(m, "downloadDirectory", &v);
+    if(ok){
+        this->_downloadDirectory = v;
+    }
+    return retVal;
+}
+
+

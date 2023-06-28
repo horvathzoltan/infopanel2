@@ -25,9 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     bi/cechelper.cpp \
     bi/constants.cpp \
+    bi/downloadfilemetadata.cpp \
+    bi/downloadmanager.cpp \
     bi/mastermode.cpp \
     bi/mode.cpp \
     bi/processrequest.cpp \
+    bi/pubimages.cpp \
     bi/slavemode.cpp \
     bi/tcpsocketclient.cpp \
     bi/tcpsocketserver.cpp \
@@ -58,21 +61,24 @@ SOURCES += \
     webapi/applicationproblem.cpp \
     webapi/applicationtheme.cpp \
     webapi/device.cpp \
-    webapi/requestmodels/devicealiverequest.cpp \
-    webapi/responsemodels/devicealiveresponse.cpp \
-    webapi/requestmodels/devicerequest.cpp \
-    webapi/responsemodels/deviceresponse.cpp \
+    webapi/requestmodels/devicealiverequestmodel.cpp \
+    webapi/requestmodels/devicerequestmodel.cpp \
+    webapi/requestmodels/pubapplicationdatarequestmodel.cpp \
     webapi/pubapplicationdata.cpp \
-    webapi/requestmodels/pubapplicationdatarequest.cpp \
-    webapi/responsemodels/pubapplicationdataresponse.cpp \
-    webapi/pubimageitem.cpp
+    webapi/responsemodels/devicealiveresponsemodel.cpp \
+    webapi/responsemodels/deviceresponsemodel.cpp \
+    webapi/pubimageitem.cpp \
+    webapi/responsemodels/pubapplicationdataresponsemodel.cpp
 
 HEADERS += \
     bi/cechelper.h \
     bi/constants.h \
+    bi/downloadfilemetadata.h \
+    bi/downloadmanager.h \
     bi/mastermode.h \
     bi/mode.h \
     bi/processrequest.h \
+    bi/pubimages.h \
     bi/slavemode.h \
     bi/tcpsocketclient.h \
     bi/tcpsocketserver.h \
@@ -103,18 +109,15 @@ HEADERS += \
     webapi/applicationproblem.h \
     webapi/applicationtheme.h \
     webapi/device.h \
-    webapi/requestmodels/devicealiverequest.h \
-    webapi/responsemodels/devicealiveresponse.h \
-    webapi/enums/devicealiveresponsecodes.h \
-    webapi/requestmodels/devicerequest.h \
-    webapi/responsemodels/deviceresponse.h \
-    webapi/enums/deviceresponsecodes.h \
+    webapi/requestmodels/devicealiverequestmodel.h \
+    webapi/requestmodels/devicerequestmodel.h \
+    webapi/requestmodels/pubapplicationdatarequestmodel.h \
     webapi/loginmodes.h \
     webapi/pubapplicationdata.h \
-    webapi/requestmodels/pubapplicationdatarequest.h \
-    webapi/responsemodels/pubapplicationdataresponse.h \
-    webapi/enums/pubapplicationdataresponsecodes.h \
-    webapi/pubimageitem.h
+    webapi/responsemodels/devicealiveresponsemodel.h \
+    webapi/responsemodels/deviceresponsemodel.h \
+    webapi/pubimageitem.h \
+    webapi/responsemodels/pubapplicationdataresponsemodel.h
 
 FORMS += \
     form3.ui \

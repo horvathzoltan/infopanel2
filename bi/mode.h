@@ -11,7 +11,7 @@ public:
     Mode(bool isMaster);
 
     bool IsMater(){return _isMaster;}
-    virtual void Start(){};
+    virtual bool Start(){return false;}
 };
 
 #endif // MODE_H

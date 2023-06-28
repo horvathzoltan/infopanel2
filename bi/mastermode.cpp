@@ -27,9 +27,10 @@ MasterMode::~MasterMode()
     zInfo("leaving MasterMode...");
 }
 
-void  MasterMode::Start()
+bool  MasterMode::Start()
 {
     bool valid = IsInited();
+    bool retVal=false;
     if(valid){
         zInfo("starting MasterMode...");
 
@@ -44,7 +45,9 @@ void  MasterMode::Start()
         zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
         _On_TimeoutGuard=false;
         _timer->start(5*1000);
+        retVal = true;
     }
+    return retVal;
 }
 
 

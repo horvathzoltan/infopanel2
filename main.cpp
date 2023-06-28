@@ -100,9 +100,16 @@ int main(int argc, char *argv[])
     zInfo("entering TestMode...");
     constants.SetTestMode(true);
     testMode = new TestMode(&webApiManager);
-    testMode->Start();
+    bool isStarted = testMode->Start();
 #endif
-    int e = app.exec();
+    int e;
+    if(isStarted){
+        zInfo("app start ok");
+        e = app.exec();
+    } else{
+        zInfo("app start failed");
+        e=1;
+    }
 
     zInfo("ExitCode: " + QString::number(e));
 

@@ -15,7 +15,7 @@ public:
     };
 
     static Output Execute(const QString& cmd, const QStringList& args, int timeout = -1);
-    static bool Wget(const QString &url, const QString &filename);
+    static bool Wget(const QString &url, const QString &filename);    
     static QString AvahiResolve(const QString &filename);
 };
 

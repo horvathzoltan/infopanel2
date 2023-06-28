@@ -1,11 +1,11 @@
-#ifndef DEVICEALIVEREQUEST_H
-#define DEVICEALIVEREQUEST_H
+#ifndef DEVICEALIVEREQUESTMODEL_H
+#define DEVICEALIVEREQUESTMODEL_H
 
 #include <QUuid>
 
 
 
-class DeviceAliveRequest
+class DeviceAliveRequestModel
 {
 public:
     /// <summary>
@@ -35,7 +35,11 @@ public:
     QString applicationDataVersion;// { get; set; } = string.Empty;
 
 public:
-    DeviceAliveRequest();
+    DeviceAliveRequestModel(QUuid _id,
+                       const QString& _deviceId,
+                       const QUuid& _applicationId);
+
+    QString ToJson() const;
 };
 
-#endif // DEVICEALIVEREQUEST_H
+#endif // DEVICEALIVEREQUESTMODEL_H

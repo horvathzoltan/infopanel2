@@ -1,11 +1,9 @@
-#ifndef PUBAPPLICATIONDATAREQUEST_H
-#define PUBAPPLICATIONDATAREQUEST_H
+#ifndef PUBAPPLICATIONDATAREQUESTMODEL_H
+#define PUBAPPLICATIONDATAREQUESTMODEL_H
 
 #include <QUuid>
 
-
-
-class PubApplicationDataRequest
+class PubApplicationDataRequestModel
 {
 public:
     /// <summary>
@@ -25,7 +23,11 @@ public:
     QUuid applicationId;// { get; set; }
 
 public:
-    PubApplicationDataRequest();
+    PubApplicationDataRequestModel(QUuid _id,
+                              const QString& _deviceId,
+                              const QUuid& _applicationId);
+
+    QString ToJson() const;
 };
 
-#endif // PUBAPPLICATIONDATAREQUEST_H
+#endif // PUBAPPLICATIONDATAREQUESTMODEL_H

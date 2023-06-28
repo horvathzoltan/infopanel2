@@ -13,6 +13,7 @@ private:
     bool _slaveFullSize = false;
     QString _apiLocation = QStringLiteral("https://api.mobileflex.hu");
     QString _deviceName = QStringLiteral("deviceName");
+    QString _downloadDirectory = QStringLiteral("/home/zoli/pubImageItems");
 
     static bool ParseMaster(const QString& v, bool *ok);
     static bool ParseBool(const QString& v, bool *ok);
@@ -21,6 +22,7 @@ private:
     bool Parse_slaveFullSize(const QMap<QString, QString>& m);
     bool Parse_slavePort(const QMap<QString, QString>& m);
     bool Parse_slaveHostAddress(const QMap<QString, QString>& m);
+    bool Parse_downloadDirectory(const QMap<QString, QString>& m);
 
 public:
     Settings();
@@ -31,6 +33,7 @@ public:
     bool SlaveFullSize(){return _slaveFullSize;}
     QString ApiLocation(){return _apiLocation;}
     QString DeviceName(){return _deviceName;}
+    QString DownloadDirectory(){return _downloadDirectory;}
 };
 
 #endif // SETTINGS_H

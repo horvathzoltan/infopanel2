@@ -9,7 +9,7 @@ Device::Device()
 
 }
 
-Device Device::JsonParse(const QJsonObject &device)
+Device Device::JsonParse(const QJsonObject &jsonObject)
 {
     Device d;
     bool ok;
@@ -22,27 +22,26 @@ Device Device::JsonParse(const QJsonObject &device)
     static const QString nameof_comments = nameof(comments);
     static const QString nameof_applications = nameof(applications);
 
-    ok = JsonValueHelper::TryGetVariant(device, nameof_deviceId, &v);
+    ok = JsonValueHelper::TryGetVariant(jsonObject, nameof_deviceId, &v);
     if(ok) d.deviceId=v.toString();
 
-    ok = JsonValueHelper::TryGetVariant(device, nameof_deviceName, &v);
+    ok = JsonValueHelper::TryGetVariant(jsonObject, nameof_deviceName, &v);
     if(ok) d.deviceName=v.toString();
 
-    ok = JsonValueHelper::TryGetVariant(device, nameof_active, &v);
+    ok = JsonValueHelper::TryGetVariant(jsonObject, nameof_active, &v);
     if(ok) d.active=v.toBool();
 
-    ok = JsonValueHelper::TryGetVariant(device, nameof_lastDeviceLoginDate, &v);
+    ok = JsonValueHelper::TryGetVariant(jsonObject, nameof_lastDeviceLoginDate, &v);
     if(ok) d.lastDeviceLoginDate=v.toDateTime();
 
-    ok = JsonValueHelper::TryGetVariant(device, nameof_comments, &v);
+    ok = JsonValueHelper::TryGetVariant(jsonObject, nameof_comments, &v);
     if(ok) d.comments=v.toString();
 
-    ok = JsonValueHelper::TryGetVariant(device, nameof_applications, &v);
-
-    QJsonArray deviceArray = device.value(nameof_applications).toArray();
-    d.applications = Application::JsonParse(deviceArray);
-
-    //if(ok) d.applications=v.toString();
+    QJsonArray ja;
+    ok = JsonValueHelper::TryGetJsonArray(jsonObject, nameof_applications, &ja);
+    if(ok){
+        JsonValueHelper::QJsonArrayToList(ja, &d.applications);
+    }
 
     return d;
 }

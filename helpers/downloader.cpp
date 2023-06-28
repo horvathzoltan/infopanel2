@@ -42,15 +42,3 @@ Downloader::Output Downloader::Execute(const QString& cmd, const QStringList& ar
     return e;
 }
 
-QString Downloader::AvahiResolve(const QString &ip)
-{
-    if(ip.isEmpty()) return {};
-    auto out = Execute("avahi-resolve",{"-a", ip}, 200);
-    auto lines = out.stdOut.split('\n');
-    if(lines.length()<1) return {};
-    auto tokens = lines[0].split('\t');
-    if(tokens.length()<2) return {};
-
-    QString hostname = tokens[1];
-    return hostname;
-}
