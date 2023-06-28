@@ -83,6 +83,7 @@ bool DownloadManager::TryDownload()
             int M = L-i; // ha maradt maradék
             if(M>0){
                 auto d = download.mid(i, M);
+                bool ok = DownloadMeta_Curl(d);
                 bool ok = Download_Curl(d);
             }
         }
@@ -122,4 +123,3 @@ Preparing to download[14]: http://pub.logcontrol.hu/images/spellcraft.jpg as a79
 Preparing to download[15]: http://pub.logcontrol.hu/images/cancer.jpg as 3b887c2f-d444-44f2-b04d-ec5ca33f1c5a
 Preparing to download[16]: http://pub.logcontrol.hu/images/sunsetfog.jpg as e81e3ea0-bd89-41f3-ba05-ee9e9038c62a
 */
-

@@ -3,9 +3,6 @@
 #include "helpers/logger.h"
 #include "settings.h"
 
-#include "helpers/downloader.h"
-
-
 
 extern Constants constants;
 extern Settings settings;
