@@ -46,3 +46,21 @@ void PubImages::AddNewItems(const QList<DownloadFileMetaData> &fileList)
     _pubImageItems.append(fileList);
     _lock.unlock();
 }
+
+void PubImages::SetLength(int ix, qint64 length)
+{
+    bool valid = ix>-1 && ix<_pubImageItems.length();
+    if(valid){
+        _pubImageItems[ix].size=length;
+    }
+}
+
+qint64 PubImages::GetLength(int ix)
+{
+    qint64 retVal=-1;
+    bool valid = ix>-1 && ix<_pubImageItems.length();
+    if(valid){
+        retVal=_pubImageItems[ix].size;
+    }
+    return retVal;
+}

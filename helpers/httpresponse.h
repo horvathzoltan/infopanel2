@@ -80,6 +80,7 @@ public:
     const QString& Body(){return _body;}
 
     int StatusCode(){return _status.statusCode;}
+    qint64 ContentLength();
     //https://www.rfc-editor.org/rfc/rfc9110.html#name-overview-of-status-codes
     bool IsSuccessful(){return 200<=_status.statusCode && _status.statusCode<=299;}
     //https://www.rfc-editor.org/rfc/rfc9110.html#name-client-error-4xx

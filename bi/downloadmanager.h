@@ -14,12 +14,14 @@ private:
     PubImages _pubImages;
 
     QString GetDownload_CurlCommand(const QList<DownloadFileMetaData> &filelist);
+    QString GetDownloadMeta_CurlCommand(const QList<DownloadFileMetaData> &filelist);
 public:
     DownloadManager();
     void Init(const QString& downloadFolder);
     void AddNewPubImageItems(const QList<DownloadFileMetaData>& fileList);
     bool Download_Curl(const QList<DownloadFileMetaData>& filelist);
-    bool TryDownload();
+    QList<qint64> DownloadMeta_Curl(const QList<DownloadFileMetaData>& filelist);
+    bool TryDownload();    
 };
 
 #endif // DOWNLOADMANAGER_H

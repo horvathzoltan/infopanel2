@@ -1,6 +1,7 @@
 #include "downloadmanager.h"
 #include "helpers/logger.h"
 #include "helpers/processhelper.h"
+#include "helpers/httpresponse.h"
 
 #include <QDir>
 
@@ -58,6 +59,53 @@ bool DownloadManager::Download_Curl(const QList<DownloadFileMetaData>& filelist)
     return retVal;
 }
 
+QString DownloadManager::GetDownloadMeta_CurlCommand(const QList<DownloadFileMetaData>& filelist)
+{
+    bool valid = !filelist.isEmpty();
+    QString retVal;
+
+    if(valid){
+        static const QString CMD = QStringLiteral(R"(curl -L -I %1)");
+        static const QString FN = QStringLiteral(R"(%1)");
+        static const QString INF = QStringLiteral(R"(Preparing to meta[%2]: %1)");
+        QString args;
+        int counter=0;
+        for(auto&a:filelist){
+            if(!args.isEmpty()) args+=' ';
+            QString fn = a.filename;
+            args+=FN.arg(a.url).arg(fn);//+"="+QString::number(counter+1);
+
+            zInfo(INF.arg(a.url).arg(a.filename).arg(counter++));
+        }
+        retVal = CMD.arg(args).arg(_downloadFolder);
+    }
+    zInfo("cmd:"+retVal);
+    return retVal;
+}
+
+
+QList<qint64> DownloadManager::DownloadMeta_Curl(const QList<DownloadFileMetaData>& filelist)
+{
+    QList<qint64> retVal;
+    QString cmd = GetDownloadMeta_CurlCommand(filelist);
+
+    ProcessHelper::Output out = ProcessHelper::ShellExecute(cmd);
+    bool ok = out.exitCode==0;
+    if(ok){
+        QStringList metas = out.stdOut.split("\r\n\r\n", Qt::SkipEmptyParts);
+        for(auto&a:metas){
+            auto httpResponse = HttpResponse::Parse(a);
+            bool isSuccessful = httpResponse.IsSuccessful();
+            qint64 length=-1;
+            if(isSuccessful){
+                length = httpResponse.ContentLength();
+            }
+            retVal.append(length);
+        }
+    }
+    return retVal;
+}
+
 bool DownloadManager::TryDownload()
 {
     static bool isDownloading = false;
@@ -69,13 +117,19 @@ bool DownloadManager::TryDownload()
 
         QList<DownloadFileMetaData> download = _pubImages.ExcludeList(filenamelist);
 
-
         int N=5;
         int L = download.count();
         int i=0;
         if(L>0){
             for(;i<L;i+=N){
                 auto d = download.mid(i, N);
+                QList<qint64> lengths = DownloadMeta_Curl(d);
+                for(int j=0;j<d.length();j++){
+                    int ix = _pubImages.GetPubImageIx(d[j].filename);
+                    if(ix>-1){
+                        _pubImages.SetLength(ix, lengths[j]);
+                    }
+                }
                 bool ok = Download_Curl(d);//először a metát kell leszedni - header content-length
                 //curl -L -I https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-9.4.0-amd64-netinst.iso
                 //Content-Length
@@ -83,7 +137,13 @@ bool DownloadManager::TryDownload()
             int M = L-i; // ha maradt maradék
             if(M>0){
                 auto d = download.mid(i, M);
-                bool ok = DownloadMeta_Curl(d);
+                QList<qint64> lengths = DownloadMeta_Curl(d);
+                for(int j=0;j<d.length();j++){
+                    int ix = _pubImages.GetPubImageIx(d[j].filename);
+                    if(ix>-1){
+                        _pubImages.SetLength(ix, lengths[j]);
+                    }
+                }
                 bool ok = Download_Curl(d);
             }
         }
@@ -92,7 +152,11 @@ bool DownloadManager::TryDownload()
         filenamelist = downloadDir.entryList(QDir::Files);
         for(auto&filename:filenamelist){
             int ix = _pubImages.GetPubImageIx(filename);
-            if(ix>-1){
+            QString fn = QDir(_downloadFolder).filePath(filename);
+            qint64 fileSize = QFile(fn).size();
+            qint64 pubImageSize = _pubImages.GetLength(ix);
+            bool downloaded = ix>-1 && (pubImageSize==-1 || fileSize==pubImageSize);
+            if(downloaded){
                 _pubImages.RemoveAt(ix);
             }
         }

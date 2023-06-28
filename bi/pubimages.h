@@ -18,6 +18,8 @@ public:
     void RemoveAt(int ix);
     QList<DownloadFileMetaData> ExcludeList(const QStringList &names);
     void AddNewItems(const QList<DownloadFileMetaData> &fileList);
+    void SetLength(int ix, qint64 length);
+    qint64 GetLength(int ix);
 };
 
 
