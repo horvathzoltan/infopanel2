@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QObject>
+#include "bi/downloadmanager.h"
 #include "mode.h"
 #include "webapimanager.h"
 
@@ -12,13 +13,13 @@ class TestMode : public QObject, public Mode
 
 private:
     WebApiManager *_webApiManager;
+    DownloadManager _downloadManager;
 
     QString _lastApplicationDataVersion_Local;
     QString _lastApplicationDataVersion_Remote;
     QString _lastApplicationVersion;
 
-    const Application *_application;
-    QList<PubImageItem> _pubImageItems;
+    const Application *_application;    
 
 public:
     TestMode(WebApiManager* webApiManager, QObject* p = nullptr);

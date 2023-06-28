@@ -13,11 +13,12 @@ extern Settings settings;
 TestMode::TestMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(true)
 {
     _webApiManager = webApiManager;
+    _downloadManager.Init(settings.DownloadDirectory());
 }
 
 TestMode::~TestMode()
 {
-
+    //delete(_downloadManager);
 }
 
 bool TestMode::Start()
@@ -50,7 +51,9 @@ bool TestMode::Start()
                 _lastApplicationVersion=_application->applicationVersion;
                 _lastApplicationDataVersion_Remote=_application->applicationDataVersion;
 
-                bool toDownload = _pubImageItems.empty() || _lastApplicationDataVersion_Remote >_lastApplicationDataVersion_Local;
+                // ha van letöltetlen adat le kell tölteni
+                // ha jött új adat, hozzá kell adni a letöltendőkhöz
+                bool toDownload = _lastApplicationDataVersion_Remote >_lastApplicationDataVersion_Local;
                 if(toDownload){
                     PubApplicationDataRequestModel pubApplicationDataRequest(
                         constants.MobileFlexGuid(),
@@ -60,20 +63,20 @@ bool TestMode::Start()
                     PubApplicationDataResponseModel pubApplicationDataResponse;
                     bool pubDataOk = _webApiManager->PubApplicationDataRequest(pubApplicationDataRequest, &pubApplicationDataResponse);
                     if(pubDataOk && pubApplicationDataResponse.resultCode == PubApplicationDataResponseModel::Codes::Ok){
-                        _lastApplicationDataVersion_Local=pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
+                        // a verziót letároljuk
+                        _lastApplicationDataVersion_Local = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
 
-                        _pubImageItems = pubApplicationDataResponse.pubApplicationData.pubImageItems;
-                        //_pubImageItems.clear();
-                        //_pubImageItems.append(pubApplicationDataResponse.pubApplicationData.pubImageItems);
-
-                        QList<Downloader::DownloadFileName> downloads;
-                        for(auto&a:_pubImageItems){
-                            Downloader::DownloadFileName item;
-                            item.filename = a.id.toString(QUuid::WithoutBraces);
-                            item.url = a.imageUrl;
-                            downloads.append(item);
+                        QList<DownloadFileMetaData> newPubImageItems;
+                        for(auto&a:pubApplicationDataResponse.pubApplicationData.pubImageItems){
+                            DownloadFileMetaData item{.filename = a.id.toString(QUuid::WithoutBraces),
+                                                      .size = -1,
+                                                      .url=a.imageUrl };
+                            newPubImageItems.append(item);
                         }
-                        bool isDownloadOk = Downloader::Download_Curl("~/pubImageItems", downloads);
+
+                        _downloadManager.AddNewPubImageItems(newPubImageItems);
+
+                        bool isDownloadOk = _downloadManager.TryDownload();
 
                         zInfo(QStringLiteral("isDownloadOk:")+(isDownloadOk?"ok":"failed"));
                    }

@@ -25,9 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     bi/cechelper.cpp \
     bi/constants.cpp \
+    bi/downloadfilemetadata.cpp \
+    bi/downloadmanager.cpp \
     bi/mastermode.cpp \
     bi/mode.cpp \
     bi/processrequest.cpp \
+    bi/pubimages.cpp \
     bi/slavemode.cpp \
     bi/tcpsocketclient.cpp \
     bi/tcpsocketserver.cpp \
@@ -70,9 +73,12 @@ SOURCES += \
 HEADERS += \
     bi/cechelper.h \
     bi/constants.h \
+    bi/downloadfilemetadata.h \
+    bi/downloadmanager.h \
     bi/mastermode.h \
     bi/mode.h \
     bi/processrequest.h \
+    bi/pubimages.h \
     bi/slavemode.h \
     bi/tcpsocketclient.h \
     bi/tcpsocketserver.h \
