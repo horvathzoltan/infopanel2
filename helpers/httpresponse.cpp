@@ -60,19 +60,24 @@ HttpResponse HttpResponse::Parse(const QString &str)
     if(valid){
         int ix1 = str.indexOf("\r\n\r\n");
 
+        QStringList lines;
         if(ix1>=0){
             r._body = str.mid(ix1+4);
+            lines = str.left(ix1).split("\r\n");
+        }
+        else
+        {
+            lines = str.split("\r\n");
+        }
 
-            auto lines = str.left(ix1).split("\r\n");
-            if(lines.length()>=1){
-                r._status = Status::Parse(lines[0]);
-                if(lines.length()>=2){
-                    for(int i=1;i<lines.length();i++){
-                        QPair<QString, QString> p;
-                        bool ok = TryParseHeaderLine(lines[i], &p);
-                        if(ok){
-                            r._headerFields.insert(p.first, p.second);
-                        }
+        if(lines.length()>=1){
+            r._status = Status::Parse(lines[0]);
+            if(lines.length()>=2){
+                for(int i=1;i<lines.length();i++){
+                    QPair<QString, QString> p;
+                    bool ok = TryParseHeaderLine(lines[i], &p);
+                    if(ok){
+                        r._headerFields.insert(p.first, p.second);
                     }
                 }
             }
@@ -80,6 +85,21 @@ HttpResponse HttpResponse::Parse(const QString &str)
     }
 
     return r;
+}
+
+qint64 HttpResponse::ContentLength()
+{
+    const QString key = QStringLiteral("content-length");
+    qint64 retVal = -1;
+    if(_headerFields.contains(key)){
+        QString v = _headerFields.value(key);
+        bool ok;
+        qint64 l = v.toLongLong(&ok);
+        if(ok){
+            retVal = l;
+        }
+    }
+    return retVal;
 }
 
 bool HttpResponse::IsContentType(const QString &c)
