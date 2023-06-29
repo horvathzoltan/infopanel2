@@ -4,7 +4,8 @@
 #include "settings.h"
 
 #include <QDir>
-
+#include <QScreen>
+#include <QApplication>
 
 extern Constants constants;
 extern Settings settings;
@@ -16,6 +17,41 @@ TestMode::TestMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(tr
 
     connect(&_aliveManager, &AliveManager::NewApplicationDataAvailable, this, &TestMode::On_NewApplicationDataAvailable);
     connect(&_aliveManager, &AliveManager::NewApplicationDataRequired, this, &TestMode::On_NewApplicationDataRequired);
+    connect(&_slideshowManager, &SlideshowManager::ChangeImage, this, &TestMode::On_ChangeImage);
+
+    QList<QScreen*> screens = qApp->screens();
+
+    if(screens.length()>0){
+        for(QScreen* a:screens)
+        {
+            zInfo("screen_name:"+a->name());
+        }
+
+        bool isFullScreen = settings.SlaveFullSize();
+        if(screens.length()>=1){
+            _w1 = new Form3();
+            if(isFullScreen){
+                QScreen *screen = screens[0];
+                _w1->move(screen->geometry().x(), screen->geometry().y());
+                _w1->resize(screen->geometry().width(), screen->geometry().height());
+                _w1->showFullScreen();
+            } else {
+                _w1->show();
+            }
+        }
+
+//        if(screens.length()>=2){
+//            _w2 = new Frame2();
+//            if(isFullScreen){
+//                QScreen *screen = screens[1];
+//                _w2->move(screen->geometry().x(), screen->geometry().y());
+//                _w2->resize(screen->geometry().width(), screen->geometry().height());
+//                _w2->showFullScreen();
+//            } else {
+//                _w2->show();
+//            }
+//        }
+    }
 }
 
 TestMode::~TestMode()
@@ -61,7 +97,6 @@ bool TestMode::Start()
                     On_NewApplicationDataRequired();
                 }
                 _aliveManager.Start();
-                //_downloadManager.Images();
                 _slideshowManager.Start();
             }
         }else{
@@ -87,8 +122,11 @@ bool TestMode::GetPubApplicationData()
         _lastApplicationDataVersion_Local = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
 
         auto newPubImageItems = ToFilesToDownload(pubApplicationDataResponse.pubApplicationData.pubImageItems);
+        _downloadManager.AddNewFilesToDownload(newPubImageItems);
+        QList<SlideShowItem> images = ToFilesToSlideshow(
+            pubApplicationDataResponse.pubApplicationData.pubImageItems);
+        _slideshowManager.SetImages(images);
 
-        _downloadManager.AddNewPubImageItems(newPubImageItems);
     }
     return true;
 }
@@ -108,12 +146,11 @@ QList<SlideShowItem> TestMode::ToFilesToSlideshow(QList<PubImageItem> pubItems)
 {
     QList<SlideShowItem> retVal;
     QDir downloadDir(settings.DownloadDirectory());
+    //auto filenamelist = downloadDir.entryList(QDir::Files);
 
-    for(auto&a:pubItems){
-
-        auto filenamelist = downloadDir.entryList(QDir::Files);
-
-        SlideShowItem item{.filename = a.id.toString(QUuid::WithoutBraces),
+    for(auto&a:pubItems){        
+        QString fn = downloadDir.filePath(a.id.toString(QUuid::WithoutBraces));
+        SlideShowItem item{.filename = fn,
                            .timeout = a.displayTimeSconds };
         retVal.append(item);
     }
@@ -133,4 +170,9 @@ void TestMode::On_NewApplicationDataRequired(){
         bool isDownloadOk = _downloadManager.TryDownload();
         zInfo(QStringLiteral("isDownloadOk:")+(isDownloadOk?"ok":"failed"));
     }
+}
+
+void TestMode::On_ChangeImage(){
+    QString fn = _slideshowManager.GetCurrentImageName();
+    _w1->ShowPicture(fn);
 }

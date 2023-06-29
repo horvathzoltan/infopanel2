@@ -15,7 +15,7 @@ Form3::Form3(QWidget *parent) :
 void Form3::showEvent( QShowEvent* event ) {
     QWidget::showEvent( event );
 
-    showEventHelper();
+    //showEventHelper();
 }
 
 Form3::~Form3()
@@ -30,11 +30,7 @@ void Form3::on_button_3_clicked()
 
 /**/
 
-void Form3::showEventHelper(){
-    qDebug() << "show 3";
-
-    QString fn = QStringLiteral("/home/pi/infopanel_pictures/2.jpg");
-
+void Form3::ShowPicture(const QString& fn){
     QPixmap p;
     p.load(fn);
 

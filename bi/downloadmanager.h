@@ -18,7 +18,7 @@ private:
 public:
     DownloadManager(const QString &downloadFolder);
 //    void Init(const QString& downloadFolder);
-    void AddNewPubImageItems(const QList<DownloadFileMetaData>& fileList);
+    void AddNewFilesToDownload(const QList<DownloadFileMetaData>& fileList);
     bool Download_Curl(const QList<DownloadFileMetaData>& filelist);
     QList<qint64> DownloadMeta_Curl(const QList<DownloadFileMetaData>& filelist);
     bool TryDownload();

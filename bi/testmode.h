@@ -10,6 +10,9 @@
 #include "mode.h"
 #include "webapimanager.h"
 
+#include "form3.h"
+//#include "frame2.h"
+
 class TestMode : public QObject, public Mode
 {
     Q_OBJECT
@@ -25,6 +28,9 @@ private:
     QString _lastApplicationDataVersion_Remote;
     QString _lastApplicationVersion;
 
+    Form3* _w1 = nullptr;
+    //Frame2* _w2 = nullptr;
+
     const Application *_application;    
 
 public:
@@ -39,6 +45,7 @@ public:
     void On_NewApplicationDataRequired();
     static QList<DownloadFileMetaData> ToFilesToDownload(QList<PubImageItem> pubItems);
     static QList<SlideShowItem> ToFilesToSlideshow(QList<PubImageItem> pubItems);
+    void On_ChangeImage();
 };
 
 #endif // TESTMODE_H

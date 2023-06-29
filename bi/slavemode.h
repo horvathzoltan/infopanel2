@@ -16,6 +16,7 @@ class SlaveMode : public QObject, public Mode
 private:
     Form3* _w1 = nullptr;
     Frame2* _w2 = nullptr;
+
     ProcessRequest _processRequest;
     TcpSocketServer _tcpSocketServer;
     WebApiManager *_webApiManager;

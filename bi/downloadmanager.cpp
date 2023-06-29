@@ -11,7 +11,7 @@ DownloadManager::DownloadManager(const QString &downloadFolder)//, PubImages* pu
     //_pubImages = pubImages;
 }
 
-void DownloadManager::AddNewPubImageItems(const QList<DownloadFileMetaData> &fileList)
+void DownloadManager::AddNewFilesToDownload(const QList<DownloadFileMetaData> &fileList)
 {
     _filesToDownload.AddNewItems(fileList);
 }
