@@ -14,6 +14,8 @@ private:
     QString _apiLocation = QStringLiteral("https://api.mobileflex.hu");
     QString _deviceName = QStringLiteral("deviceName");
     QString _downloadDirectory = QStringLiteral("/home/zoli/pubImageItems");
+    QString _counterDirectory = QStringLiteral("/home/zoli/pubImageItemCounters");
+    int _aliveTimeInterval = 1000*15;//1000*60*5; // 5 min
 
     static bool ParseMaster(const QString& v, bool *ok);
     static bool ParseBool(const QString& v, bool *ok);
@@ -23,6 +25,8 @@ private:
     bool Parse_slavePort(const QMap<QString, QString>& m);
     bool Parse_slaveHostAddress(const QMap<QString, QString>& m);
     bool Parse_downloadDirectory(const QMap<QString, QString>& m);
+    bool Parse_aliveTimeInterval(const QMap<QString, QString>& m);
+    bool Parse_counterDirectory(const QMap<QString, QString>& m);
 
 public:
     Settings();
@@ -34,6 +38,8 @@ public:
     QString ApiLocation(){return _apiLocation;}
     QString DeviceName(){return _deviceName;}
     QString DownloadDirectory(){return _downloadDirectory;}
+    QString CounterDirectory(){return _counterDirectory;}
+    int AliveTimeInterval(){return _aliveTimeInterval;}
 };
 
 #endif // SETTINGS_H

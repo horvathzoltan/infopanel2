@@ -21,7 +21,9 @@ bool Settings::Load(const QString &fn)
             Settings::Parse_slavePort(m);
             Settings::Parse_slaveHostAddress(m);
             Settings::Parse_slaveFullSize(m);
+            Settings::Parse_aliveTimeInterval(m);
             Settings::Parse_downloadDirectory(m);
+            Settings::Parse_counterDirectory(m);
         }
     }
     return false;
@@ -130,6 +132,33 @@ bool Settings::Parse_downloadDirectory(const QMap<QString, QString>& m){
     bool ok = IniHelper::TryGetValue(m, "downloadDirectory", &v);
     if(ok){
         this->_downloadDirectory = v;
+    }
+    return retVal;
+}
+
+bool Settings::Parse_aliveTimeInterval(const QMap<QString, QString> &m)
+{
+    bool retVal=false;
+    QString v = "";
+    bool isMode = IniHelper::TryGetValue(m, "aliveTimeInterval", &v);
+    if(isMode && !v.isEmpty()){
+        bool parse_ok;
+        int v_parsed = v.toInt(&parse_ok);
+        if(parse_ok && v_parsed>1*60*1000 && v_parsed<60*60*1000){
+            this->_aliveTimeInterval = v_parsed;
+            retVal = true;
+        }
+    }
+    return retVal;
+}
+
+bool Settings::Parse_counterDirectory(const QMap<QString, QString> &m)
+{
+    bool retVal=false;
+    QString v = "";
+    bool ok = IniHelper::TryGetValue(m, "counterDirectory", &v);
+    if(ok){
+        this->_counterDirectory = v;
     }
     return retVal;
 }

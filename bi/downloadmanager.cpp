@@ -5,20 +5,15 @@
 
 #include <QDir>
 
-DownloadManager::DownloadManager()
-{
-
-}
-
-void DownloadManager::Init(const QString &downloadFolder)
+DownloadManager::DownloadManager(const QString &downloadFolder)//, PubImages* pubImages)
 {
     _downloadFolder = downloadFolder;
+    //_pubImages = pubImages;
 }
 
 void DownloadManager::AddNewPubImageItems(const QList<DownloadFileMetaData> &fileList)
 {
-
-    _pubImages.AddNewItems(fileList);
+    _filesToDownload.AddNewItems(fileList);
 }
 
 QString DownloadManager::GetDownload_CurlCommand(const QList<DownloadFileMetaData>& filelist)
@@ -115,7 +110,7 @@ bool DownloadManager::TryDownload()
         QDir downloadDir(_downloadFolder);
         auto filenamelist = downloadDir.entryList(QDir::Files);
 
-        QList<DownloadFileMetaData> download = _pubImages.ExcludeList(filenamelist);
+        QList<DownloadFileMetaData> download = _filesToDownload.ExcludeList(filenamelist);
 
         int N=5;
         int L = download.count();
@@ -125,9 +120,9 @@ bool DownloadManager::TryDownload()
                 auto d = download.mid(i, N);
                 QList<qint64> lengths = DownloadMeta_Curl(d);
                 for(int j=0;j<d.length();j++){
-                    int ix = _pubImages.GetPubImageIx(d[j].filename);
+                    int ix = _filesToDownload.GetPubImageIx(d[j].filename);
                     if(ix>-1){
-                        _pubImages.SetLength(ix, lengths[j]);
+                        _filesToDownload.SetLength(ix, lengths[j]);
                     }
                 }
                 bool ok = Download_Curl(d);//először a metát kell leszedni - header content-length
@@ -139,9 +134,9 @@ bool DownloadManager::TryDownload()
                 auto d = download.mid(i, M);
                 QList<qint64> lengths = DownloadMeta_Curl(d);
                 for(int j=0;j<d.length();j++){
-                    int ix = _pubImages.GetPubImageIx(d[j].filename);
+                    int ix = _filesToDownload.GetPubImageIx(d[j].filename);
                     if(ix>-1){
-                        _pubImages.SetLength(ix, lengths[j]);
+                        _filesToDownload.SetLength(ix, lengths[j]);
                     }
                 }
                 bool ok = Download_Curl(d);
@@ -150,20 +145,26 @@ bool DownloadManager::TryDownload()
 
         //ami lejött, azt kiszedjük a listából
         filenamelist = downloadDir.entryList(QDir::Files);
+        //QDir downloadDir = QDir(_downloadFolder);
         for(auto&filename:filenamelist){
-            int ix = _pubImages.GetPubImageIx(filename);
-            QString fn = QDir(_downloadFolder).filePath(filename);
+            int ix = _filesToDownload.GetPubImageIx(filename);
+            QString fn = downloadDir.filePath(filename);
             qint64 fileSize = QFile(fn).size();
-            qint64 pubImageSize = _pubImages.GetLength(ix);
+            qint64 pubImageSize = _filesToDownload.GetLength(ix);
             bool downloaded = ix>-1 && (pubImageSize==-1 || fileSize==pubImageSize);
             if(downloaded){
-                _pubImages.RemoveAt(ix);
+                _filesToDownload.RemoveAt(ix);
             }
         }
         retVal = true;
         isDownloading = false;
     }
     return retVal;
+}
+
+bool DownloadManager::HasDownloads()
+{
+    return this->_filesToDownload.ItemCount()>0;
 }
 
 

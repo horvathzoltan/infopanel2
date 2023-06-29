@@ -1,6 +1,7 @@
 #ifndef MASTERMODE_H
 #define MASTERMODE_H
 
+#include <QMutex>
 #include <QTimer>
 #include "bi/tcpsocketclient.h"
 #include "mode.h"
@@ -15,7 +16,7 @@ private:
     QTimer *_timer;
     int _counter;
     TcpSocketClient *_tcpSocketSender;
-    bool _On_TimeoutGuard;
+    QMutex _timerMutex;
 
     // külső függőség
     bool IsInited(){return _webApiManager != nullptr;}

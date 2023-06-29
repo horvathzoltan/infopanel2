@@ -2,7 +2,9 @@
 #define WEBAPIMANAGER_H
 
 #include "webapi/applicationproblem.h"
+#include "webapi/requestmodels/devicealiverequestmodel.h"
 #include "webapi/requestmodels/devicerequestmodel.h"
+#include "webapi/responsemodels/devicealiveresponsemodel.h"
 #include "webapi/responsemodels/deviceresponsemodel.h"
 #include "webapi/requestmodels/pubapplicationdatarequestmodel.h"
 #include "webapi/responsemodels/pubapplicationdataresponsemodel.h"
@@ -29,6 +31,7 @@ public:
     WebApiManager(const QString &apiLocation);
     bool DeviceRequest(const DeviceRequestModel& requestModel, DeviceResponseModel* d);
     bool PubApplicationDataRequest(const PubApplicationDataRequestModel& requestModel, PubApplicationDataResponseModel* d);
+    bool DeviceAliveRequest(const DeviceAliveRequestModel& requestModel, DeviceAliveResponseModel* d);
 
 
     QString LastErrorMessage(){return _lastError.ToString();}

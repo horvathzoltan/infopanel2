@@ -3,14 +3,19 @@
 #include "helpers/logger.h"
 #include "settings.h"
 
+#include <QDir>
+
 
 extern Constants constants;
 extern Settings settings;
 
-TestMode::TestMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(true)
+TestMode::TestMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(true),
+    _downloadManager(settings.DownloadDirectory()), _aliveManager(webApiManager)
 {
-    _webApiManager = webApiManager;
-    _downloadManager.Init(settings.DownloadDirectory());
+    _webApiManager = webApiManager;    
+
+    connect(&_aliveManager, &AliveManager::NewApplicationDataAvailable, this, &TestMode::On_NewApplicationDataAvailable);
+    connect(&_aliveManager, &AliveManager::NewApplicationDataRequired, this, &TestMode::On_NewApplicationDataRequired);
 }
 
 TestMode::~TestMode()
@@ -22,14 +27,14 @@ bool TestMode::Start()
 {
     bool valid = IsInited();
     bool retVal = false;
-    if(valid){
+    if(valid){        
         zInfo("starting TestMode...");
 
-        QString deviceId = constants.IsTestMode()?"dca6327492ab":constants.DeviceId();
+        //QString deviceId = constants.IsTestMode()?"dca6327492ab":constants.DeviceId();
         
         DeviceRequestModel deviceRequest(
             constants.MobileFlexGuid(),
-            deviceId,
+            constants.DeviceId(),
             settings.DeviceName());
         
         DeviceResponseModel deviceResponse;
@@ -48,36 +53,16 @@ bool TestMode::Start()
                 _lastApplicationVersion=_application->applicationVersion;
                 _lastApplicationDataVersion_Remote=_application->applicationDataVersion;
 
+                // induláskor, az applicationban kapink erről információt
                 // ha van letöltetlen adat le kell tölteni
                 // ha jött új adat, hozzá kell adni a letöltendőkhöz
-                bool toDownload = _lastApplicationDataVersion_Remote >_lastApplicationDataVersion_Local;
-                if(toDownload){
-                    PubApplicationDataRequestModel pubApplicationDataRequest(
-                        constants.MobileFlexGuid(),
-                        deviceId,
-                        constants.ApplicationId());
-
-                    PubApplicationDataResponseModel pubApplicationDataResponse;
-                    bool pubDataOk = _webApiManager->PubApplicationDataRequest(pubApplicationDataRequest, &pubApplicationDataResponse);
-                    if(pubDataOk && pubApplicationDataResponse.resultCode == PubApplicationDataResponseModel::Codes::Ok){
-                        // a verziót letároljuk
-                        _lastApplicationDataVersion_Local = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
-
-                        QList<DownloadFileMetaData> newPubImageItems;
-                        for(auto&a:pubApplicationDataResponse.pubApplicationData.pubImageItems){
-                            DownloadFileMetaData item{.filename = a.id.toString(QUuid::WithoutBraces),
-                                                      .size = -1,
-                                                      .url=a.imageUrl };
-                            newPubImageItems.append(item);
-                        }
-
-                        _downloadManager.AddNewPubImageItems(newPubImageItems);
-
-                        bool isDownloadOk = _downloadManager.TryDownload();
-
-                        zInfo(QStringLiteral("isDownloadOk:")+(isDownloadOk?"ok":"failed"));
-                   }
+                bool isNewDataAvailable = _lastApplicationDataVersion_Remote != _lastApplicationDataVersion_Local;
+                if(isNewDataAvailable){
+                    On_NewApplicationDataRequired();
                 }
+                _aliveManager.Start();
+                //_downloadManager.Images();
+                _slideshowManager.Start();
             }
         }else{
             zInfo(_webApiManager->LastErrorMessage());
@@ -85,4 +70,67 @@ bool TestMode::Start()
 
     }
     return retVal;
+}
+
+bool TestMode::GetPubApplicationData()
+{
+    PubApplicationDataRequestModel pubApplicationDataRequest(
+        constants.MobileFlexGuid(),
+        constants.DeviceId(),
+        constants.ApplicationId());
+
+    // Alkalmazásadatok letöltése
+    PubApplicationDataResponseModel pubApplicationDataResponse;
+    bool pubDataOk = _webApiManager->PubApplicationDataRequest(pubApplicationDataRequest, &pubApplicationDataResponse);
+    if(pubDataOk && pubApplicationDataResponse.resultCode == PubApplicationDataResponseModel::Codes::Ok){
+        // a verziót letároljuk
+        _lastApplicationDataVersion_Local = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
+
+        auto newPubImageItems = ToFilesToDownload(pubApplicationDataResponse.pubApplicationData.pubImageItems);
+
+        _downloadManager.AddNewPubImageItems(newPubImageItems);
+    }
+    return true;
+}
+
+QList<DownloadFileMetaData> TestMode::ToFilesToDownload(QList<PubImageItem> pubItems){
+    QList<DownloadFileMetaData> retVal;
+    for(auto&a:pubItems){
+        DownloadFileMetaData item{.filename = a.id.toString(QUuid::WithoutBraces),
+                                  .size = -1,
+                                  .url=a.imageUrl };
+        retVal.append(item);
+    }
+    return retVal;
+}
+
+QList<SlideShowItem> TestMode::ToFilesToSlideshow(QList<PubImageItem> pubItems)
+{
+    QList<SlideShowItem> retVal;
+    QDir downloadDir(settings.DownloadDirectory());
+
+    for(auto&a:pubItems){
+
+        auto filenamelist = downloadDir.entryList(QDir::Files);
+
+        SlideShowItem item{.filename = a.id.toString(QUuid::WithoutBraces),
+                           .timeout = a.displayTimeSconds };
+        retVal.append(item);
+    }
+    return retVal;
+}
+
+void TestMode::On_NewApplicationDataAvailable(){
+    zTrace();
+    GetPubApplicationData();
+}
+
+void TestMode::On_NewApplicationDataRequired(){
+    zTrace();
+    GetPubApplicationData();
+    bool hasDownloads = _downloadManager.HasDownloads();
+    if(hasDownloads){
+        bool isDownloadOk = _downloadManager.TryDownload();
+        zInfo(QStringLiteral("isDownloadOk:")+(isDownloadOk?"ok":"failed"));
+    }
 }

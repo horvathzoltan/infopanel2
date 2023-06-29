@@ -8,18 +8,20 @@
 #include <QString>
 
 
-class PubImages{
+class DownloadFiles{
 private:
     QList<DownloadFileMetaData> _pubImageItems;
     QReadWriteLock _lock;
 public:
-    PubImages();
+    DownloadFiles();
     int GetPubImageIx(const QString &name);
     void RemoveAt(int ix);
     QList<DownloadFileMetaData> ExcludeList(const QStringList &names);
     void AddNewItems(const QList<DownloadFileMetaData> &fileList);
     void SetLength(int ix, qint64 length);
     qint64 GetLength(int ix);
+
+    int ItemCount(){return _pubImageItems.count();}
 };
 
 

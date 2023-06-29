@@ -139,5 +139,18 @@ bool WebApiManager::PubApplicationDataRequest(const PubApplicationDataRequestMod
     return retVal;
 }
 
+bool WebApiManager::DeviceAliveRequest(const DeviceAliveRequestModel &requestModel,
+                                       DeviceAliveResponseModel *responseModel)
+{
+    bool retVal = false;
+    QString cmd = GetServiceCommand(QStringLiteral("DeviceAlive"), requestModel.ToJson());
+
+    bool ok = Request(cmd,responseModel,&_lastError);
+    if(ok){
+        retVal = true;
+    }
+    return retVal;
+}
+
 
 

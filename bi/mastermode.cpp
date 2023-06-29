@@ -5,6 +5,8 @@
 #include "settings.h"
 #include "webapimanager.h"
 
+#include <QMutexLocker>
+
 extern Settings settings;
 
 MasterMode::MasterMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(true)
@@ -43,7 +45,7 @@ bool  MasterMode::Start()
         QString cmd = QStringLiteral("master:started");
         QString response = _tcpSocketSender->Send(cmd);
         zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
-        _On_TimeoutGuard=false;
+
         _timer->start(5*1000);
         retVal = true;
     }
@@ -53,17 +55,14 @@ bool  MasterMode::Start()
 
 
 void MasterMode::On_Timeout()
-{    
-    if(!_On_TimeoutGuard){
-        _On_TimeoutGuard = true;
-        zInfo(QStringLiteral("On_Timeout: %1").arg(_counter++));
-        int pow = CECHelper::GetPowerState();
-        QString cmd = QStringLiteral("pow:")+QString::number(pow);
+{
+    QMutexLocker locker(&_timerMutex);
+    zInfo(QStringLiteral("On_Timeout: %1").arg(_counter++));
+    int pow = CECHelper::GetPowerState();
+    QString cmd = QStringLiteral("pow:")+QString::number(pow);
 
-        QString response = _tcpSocketSender->Send(cmd);
-        zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
-        _On_TimeoutGuard = false;
-    }
+    QString response = _tcpSocketSender->Send(cmd);
+    zInfo(QStringLiteral("sent: ")+cmd+' '+(response =="ok"?"success":"failed"));
 }
 
 

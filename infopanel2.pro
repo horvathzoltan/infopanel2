@@ -23,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bi/alivemanager.cpp \
     bi/cechelper.cpp \
     bi/constants.cpp \
     bi/downloadfilemetadata.cpp \
@@ -32,6 +33,8 @@ SOURCES += \
     bi/processrequest.cpp \
     bi/pubimages.cpp \
     bi/slavemode.cpp \
+    bi/slideshowitem.cpp \
+    bi/slideshowmanager.cpp \
     bi/tcpsocketclient.cpp \
     bi/tcpsocketserver.cpp \
     bi/testmode.cpp \
@@ -71,6 +74,7 @@ SOURCES += \
     webapi/responsemodels/pubapplicationdataresponsemodel.cpp
 
 HEADERS += \
+    bi/alivemanager.h \
     bi/cechelper.h \
     bi/constants.h \
     bi/downloadfilemetadata.h \
@@ -80,6 +84,8 @@ HEADERS += \
     bi/processrequest.h \
     bi/pubimages.h \
     bi/slavemode.h \
+    bi/slideshowitem.h \
+    bi/slideshowmanager.h \
     bi/tcpsocketclient.h \
     bi/tcpsocketserver.h \
     bi/testmode.h \
