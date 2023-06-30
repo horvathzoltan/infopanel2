@@ -171,6 +171,39 @@ void TextFileHelper::SetUtf8Encoding(QTextStream* st)
 #endif
 }
 
+QChar TextFileHelper::GetLastChar(const QString& filename){
+    if(filename.isEmpty()) return false;
+
+    QFileInfo fi(filename);
+
+    if(!fi.exists())
+    {
+    _lastError = FNE.arg(filename);
+    if(_verbose) zInfo(_lastError);
+    return false;
+    }
+
+    QFile f(filename);
+
+    // TODO ha relatív a filename, akkor abszolúttá kell tenni
+    // egyébként megnyitható azaz
+
+    bool ok = f.open(QIODevice::ReadOnly);
+    if(!ok){
+    _lastError = FNE.arg(f.errorString(),filename);
+    if(_verbose) zInfo(_lastError);
+    return false;
+    }
+
+    _lastError.clear();
+    if(_verbose) zInfo(LOK.arg(filename));
+    qint64 size = f.size();
+    f.seek(size-1);
+    QByteArray a = f.read(1);
+    f.close();
+    QChar e((a.isEmpty())?'\0':a[0]);
+    return e;
+}
 
 bool TextFileHelper::Save(const QString& txt, const QString& fn, bool isAppend) {
 

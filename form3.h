@@ -19,8 +19,14 @@ public:
     void ShowPicture(const QString& fn,  const QString& sn, QUuid id);
     void HidePicture();
 
-    void CountImage();
+    void CountImage(qint64 elapsed);
+
     QString GetButtonText(const QString &fn, const QString &sn);
+
+    QString LogImage1(QUuid id);
+    void LogImage2(const QString& filepath, qint64 elapsed);
+    QString _logImage1Path;
+
 private slots:
     void on_button_3_clicked();
 

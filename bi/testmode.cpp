@@ -116,6 +116,12 @@ bool TestMode::Start()
     return retVal;
 }
 
+bool TestMode::Stop(){
+    //_slideshowManager.Stop();
+    _w1->HidePicture();
+    return true;
+}
+
 bool TestMode::GetPubApplicationData()
 {
     PubApplicationDataRequestModel pubApplicationDataRequest(

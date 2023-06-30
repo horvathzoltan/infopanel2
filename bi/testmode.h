@@ -48,6 +48,7 @@ public:
     static QList<SlideShowItem> ToFilesToSlideshow(QList<PubImageItem> pubItems);
     void On_ChangeImage();
     void On_HideImage();
+    bool Stop();
 };
 
 #endif // TESTMODE_H

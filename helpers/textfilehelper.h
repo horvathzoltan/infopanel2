@@ -20,6 +20,7 @@ public:
     static bool LoadLinesContains(const QString &filename, const QStringList &t1, QStringList* e);
     static const QString& LastError(){return _lastError;};
     static bool Save(const QString &txt, const QString &fn, bool isAppend);
+    static QChar GetLastChar(const QString &fn);
 private:
     static void SetUtf8Encoding(QTextStream* st);
 };

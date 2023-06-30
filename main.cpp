@@ -82,6 +82,11 @@ int main(int argc, char *argv[])
         QDir().mkpath(countDir.absolutePath());
     }
 
+    QDir logDir(settings.LogDirectory());
+    if(!logDir.exists()){
+        QDir().mkpath(logDir.absolutePath());
+    }
+
     SlaveMode *slaveMode=nullptr;
     MasterMode *masterMode=nullptr;
     TestMode *testMode=nullptr;
@@ -117,6 +122,9 @@ int main(int argc, char *argv[])
         e=1;
     }
 
+    if(testMode!=nullptr){
+        testMode->Stop();
+    }
     zInfo("ExitCode: " + QString::number(e));
 
     delete(slaveMode);

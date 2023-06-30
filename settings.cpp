@@ -163,6 +163,17 @@ bool Settings::Parse_counterDirectory(const QMap<QString, QString> &m)
     return retVal;
 }
 
+bool Settings::Parse_logDirectory(const QMap<QString, QString> &m)
+{
+    bool retVal=false;
+    QString v = "";
+    bool ok = IniHelper::TryGetValue(m, "logDirectory", &v);
+    if(ok){
+        this->_logDirectory = v;
+    }
+    return retVal;
+}
+
 bool Settings::Parse_downloadInterval(const QMap<QString, QString> &m)
 {
     bool retVal=false;
