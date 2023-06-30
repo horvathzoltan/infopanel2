@@ -1,9 +1,7 @@
 #ifndef DOWNLOADMANAGER_H
 #define DOWNLOADMANAGER_H
 
-
 #include "pubimages.h"
-
 #include <QList>
 #include <QString>
 #include <QTimer>

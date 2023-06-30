@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QDir>
 
 #include "bi/webapimanager.h"
 #include "helpers/stringify.h"
@@ -75,6 +76,11 @@ int main(int argc, char *argv[])
     zInfo("isMasterMode: " + QString::number(isMasterMode));
 
     WebApiManager webApiManager(settings.ApiLocation());
+
+    QDir countDir(settings.CounterDirectory());
+    if(!countDir.exists()){
+        QDir().mkpath(countDir.absolutePath());
+    }
 
     SlaveMode *slaveMode=nullptr;
     MasterMode *masterMode=nullptr;

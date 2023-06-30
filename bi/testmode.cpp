@@ -65,8 +65,10 @@ bool TestMode::Start()
 {
     bool valid = IsInited();
     bool retVal = false;
-    if(valid){        
+    if(valid){
         zInfo("starting TestMode...");
+
+        _lastApplicationDataVersion = _slideshowManager.GetSerieName();
 
         //_lastApplicationDataVersion = "Teszt.1";
         //QString deviceId = constants.IsTestMode()?"dca6327492ab":constants.DeviceId();
@@ -161,7 +163,8 @@ QList<SlideShowItem> TestMode::ToFilesToSlideshow(QList<PubImageItem> pubItems)
     for(auto&a:pubItems){        
         QString fn = downloadDir.filePath(a.id.toString(QUuid::WithoutBraces));
         SlideShowItem item{.filename = fn,
-                           .timeout = a.displayTimeSconds };
+                           .timeout = a.displayTimeSconds,
+                           .id=a.id };
         retVal.append(item);
     }
     return retVal;
@@ -197,13 +200,14 @@ void TestMode::On_Alive()
 void TestMode::On_ChangeImage(){
     QString fn = _slideshowManager.GetCurrentImageName();
     QString sn = _slideshowManager.GetSerieName();
+    QUuid id = _slideshowManager.GetCurrentId();
     int time = _slideshowManager.GetCurrentImageTime();
-    _w1->ShowPicture(fn, sn+":"+QString::number(time)+"sec");
+    _w1->ShowPicture(fn, sn+":"+QString::number(time)+"sec", id);
 }
 
 void TestMode::On_HideImage(){
     //QString fn = _slideshowManager.GetCurrentImageName();
     //QString sn = _slideshowManager.GetSerieName();
-    int time = _slideshowManager.GetCurrentImageTime();
+    //int time = _slideshowManager.GetCurrentImageTime();
     _w1->HidePicture();
 }

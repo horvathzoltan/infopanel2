@@ -12,6 +12,8 @@ class SlideshowManager : public QObject
     Q_OBJECT
 
 private:
+    static const QString FILENAME;
+
     QTimer _timer;
     QList<SlideShowItem> _images;
     QReadWriteLock _imagesLock;
@@ -27,7 +29,8 @@ public:
     void Next();
     QString GetCurrentImageName();
     int GetCurrentImageTime();
-    QString GetSerieName(){return _serieName;};
+    QUuid GetCurrentId();
+    QString GetSerieName(){return _serieName;};    
     int ImagesLength();
     bool Save();
     bool Load();

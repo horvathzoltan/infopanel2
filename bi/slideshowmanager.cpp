@@ -34,6 +34,8 @@ void SlideshowManager::SetImages(const QString& serieName, const QList<SlideShow
     }
 }
 
+const QString SlideshowManager::FILENAME = QStringLiteral("SlideshowManager.ini");
+
 bool SlideshowManager::Save(){
 
     _imagesLock.lockForRead();
@@ -42,19 +44,19 @@ bool SlideshowManager::Save(){
         if(!txt.isEmpty()) txt+='|';
         txt+=a.ToCSV();
     }
-    QString msg = "serieName="+_serieName+'\n'+
+    QString content = "serieName="+_serieName+'\n'+
                   "currentIx="+QString::number(_currentIx)+'\n'+
                   "images="+txt+'\n';
     _imagesLock.unlock();
 
-    bool ok = TextFileHelper::Save(msg, "SlideshowManager.ini", false);
+    bool ok = TextFileHelper::Save(content, FILENAME, false);
 
     return ok;
 }
 
 bool SlideshowManager::Load(){
     QStringList lines;
-    bool ok = TextFileHelper::LoadLines("SlideshowManager.ini", &lines);
+    bool ok = TextFileHelper::LoadLines(FILENAME, &lines);
     bool retVal = false;
     if(ok && !lines.isEmpty()){
         _imagesLock.lockForWrite();
@@ -154,6 +156,18 @@ int SlideshowManager::GetCurrentImageTime()
     if(valid){
         _imagesLock.lockForRead();
         retVal =  _images[_currentIx].timeout;
+        _imagesLock.unlock();
+    }
+    return retVal;
+}
+
+QUuid SlideshowManager::GetCurrentId()
+{
+    bool valid = _currentIx>=0 && _currentIx<_images.length();
+    QUuid retVal;
+    if(valid){
+        _imagesLock.lockForRead();
+        retVal = _images[_currentIx].id;
         _imagesLock.unlock();
     }
     return retVal;

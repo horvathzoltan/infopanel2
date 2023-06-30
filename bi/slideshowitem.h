@@ -2,13 +2,14 @@
 #define SLIDESHOWITEM_H
 
 #include <QString>
+#include <QUuid>
 
 class SlideShowItem
 {
 public:
     QString filename;
     int timeout;
-
+    QUuid id;
 public:
     bool IsValid();
     int IntervalMs(){return timeout*1000;}
