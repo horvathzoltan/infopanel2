@@ -15,7 +15,8 @@ private:
     QString _deviceName = QStringLiteral("deviceName");
     QString _downloadDirectory = QStringLiteral("/home/zoli/pubImageItems");
     QString _counterDirectory = QStringLiteral("/home/zoli/pubImageItemCounters");
-    int _aliveTimeInterval = 1000*15;//1000*60*5; // 5 min
+    int _aliveTimeInterval = 1000*5;//5 sec //1000*60*5; // 5 min
+    int _downloadInterval = 3;
 
     static bool ParseMaster(const QString& v, bool *ok);
     static bool ParseBool(const QString& v, bool *ok);
@@ -27,6 +28,7 @@ private:
     bool Parse_downloadDirectory(const QMap<QString, QString>& m);
     bool Parse_aliveTimeInterval(const QMap<QString, QString>& m);
     bool Parse_counterDirectory(const QMap<QString, QString>& m);
+    bool Parse_downloadInterval(const QMap<QString, QString>& m);
 
 public:
     Settings();
@@ -38,6 +40,7 @@ public:
     QString ApiLocation(){return _apiLocation;}
     QString DeviceName(){return _deviceName;}
     QString DownloadDirectory(){return _downloadDirectory;}
+    int DownloadInterval(){return _downloadInterval;}
     QString CounterDirectory(){return _counterDirectory;}
     int AliveTimeInterval(){return _aliveTimeInterval;}
 };

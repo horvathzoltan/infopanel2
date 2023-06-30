@@ -29,7 +29,10 @@ public:
     static DeviceAliveResponseModel JsonParse(const QJsonObject& o);
 
     bool IsNewApplicationDataAvailable(){ return (resultCode & NewApplicationDataAvailable) !=0; }
-    bool IsNewApplicationDataRequeired(){ return (resultCode & NewApplicationDataAvailable) !=0; }
+    bool IsNewApplicationDataRequeired(){ return (resultCode & NewApplicationDataRequired) !=0; }
+    //
+    bool IsNewApplicationAvailable(){ return (resultCode & NewApplicationVersionAvailable) !=0; }
+    bool IsNewApplicationRequeired(){ return (resultCode & NewApplicationVersionRequired) !=0; }
 };
 
 #endif // DEVICEALIVERESPONSEMODEL_H

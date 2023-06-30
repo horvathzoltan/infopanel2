@@ -36,7 +36,7 @@ public:
 
     QString LastErrorMessage(){return _lastError.ToString();}
 
-    const Application* GetApplication(const DeviceResponseModel& r);
+    Application* GetApplication(DeviceResponseModel& r);
 
     template<typename T>
     static bool HandleResponse(const QString& str, T* d, Error *error){

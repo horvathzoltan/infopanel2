@@ -36,11 +36,11 @@ public:
 
     template<typename T>
     static bool TryGetEnum(const QVariant& var, T* v){
-        bool valid = v != nullptr && var.type()==QVariant::Int;
+        bool valid = v != nullptr;// && var.type()==QVariant::Int;
         bool retVal = false;
         if(valid){
             bool ok2;
-            int i = var.toInt(&ok2);
+            int i = var.toLongLong(&ok2);
             if(ok2){
                 * v=static_cast<T>(i);
                 retVal = true;

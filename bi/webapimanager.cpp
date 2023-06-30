@@ -81,7 +81,7 @@ QString WebApiManager::GetServiceCommand(const QString& service, const QString& 
     return CMD.arg(_apiLocation,service,data);
 }
 
-const Application* WebApiManager::GetApplication(const DeviceResponseModel& r)
+Application* WebApiManager::GetApplication(DeviceResponseModel& r)
 {
     return r.GetApplication(constants.ApplicationId());
 }

@@ -24,14 +24,14 @@ private:
     SlideshowManager _slideshowManager;
     DownloadFiles _pubImages;
 
-    QString _lastApplicationDataVersion_Local;
-    QString _lastApplicationDataVersion_Remote;
+    QString _lastApplicationDataVersion;
+    //QString _lastApplicationDataVersion_Remote;
     QString _lastApplicationVersion;
 
     Form3* _w1 = nullptr;
     //Frame2* _w2 = nullptr;
 
-    const Application *_application;    
+    Application *_application;
 
 public:
     TestMode(WebApiManager* webApiManager, QObject* p = nullptr);
@@ -43,9 +43,11 @@ public:
 
     void On_NewApplicationDataAvailable();
     void On_NewApplicationDataRequired();
+    void On_Alive();
     static QList<DownloadFileMetaData> ToFilesToDownload(QList<PubImageItem> pubItems);
     static QList<SlideShowItem> ToFilesToSlideshow(QList<PubImageItem> pubItems);
     void On_ChangeImage();
+    void On_HideImage();
 };
 
 #endif // TESTMODE_H

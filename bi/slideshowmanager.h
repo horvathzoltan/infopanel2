@@ -3,6 +3,8 @@
 
 #include "slideshowitem.h"
 
+#include <QMutex>
+#include <QReadWriteLock>
 #include <QTimer>
 
 class SlideshowManager : public QObject
@@ -12,17 +14,26 @@ class SlideshowManager : public QObject
 private:
     QTimer _timer;
     QList<SlideShowItem> _images;
+    QReadWriteLock _imagesLock;
     int _currentIx;
+    QString _serieName;
 
 public:
     SlideshowManager();
     void On_Timeout();
-    bool Start();
-    void SetImages(QList<SlideShowItem> images);
+    bool ReStart();
+    bool IsStarted(){return _timer.isActive(); };
+    void SetImages(const QString& fn, const QList<SlideShowItem>& images);
     void Next();
     QString GetCurrentImageName();
+    int GetCurrentImageTime();
+    QString GetSerieName(){return _serieName;};
+    int ImagesLength();
+    bool Save();
+    bool Load();
 signals:
     void ChangeImage();
+    void HideImage();
 
 };
 

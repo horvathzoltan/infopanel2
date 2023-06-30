@@ -5,10 +5,15 @@
 
 #include <QDir>
 
-DownloadManager::DownloadManager(const QString &downloadFolder)//, PubImages* pubImages)
+bool DownloadManager::_isDownloading = false;
+
+DownloadManager::DownloadManager(const QString &downloadFolder, int downloadInterval)
 {
     _downloadFolder = downloadFolder;
     //_pubImages = pubImages;
+    _timer.setInterval(downloadInterval*1000*60);
+    connect(&_timer, &QTimer::timeout, this, &DownloadManager::On_Timeout);
+    _timer.start();
 }
 
 void DownloadManager::AddNewFilesToDownload(const QList<DownloadFileMetaData> &fileList)
@@ -101,12 +106,12 @@ QList<qint64> DownloadManager::DownloadMeta_Curl(const QList<DownloadFileMetaDat
     return retVal;
 }
 
+// todo óránként (settings) nézzük azért meg, hogy maradtak-e fent letöltések
 bool DownloadManager::TryDownload()
-{
-    static bool isDownloading = false;
+{    
     bool retVal = false;
-    if(isDownloading==false){
-        isDownloading = true;
+    if(_isDownloading==false){
+        _isDownloading = true;
         QDir downloadDir(_downloadFolder);
         auto filenamelist = downloadDir.entryList(QDir::Files);
 
@@ -122,7 +127,7 @@ bool DownloadManager::TryDownload()
                 for(int j=0;j<d.length();j++){
                     int ix = _filesToDownload.GetPubImageIx(d[j].filename);
                     if(ix>-1){
-                        _filesToDownload.SetLength(ix, lengths[j]);
+                        _filesToDownload.SetItemLength(ix, lengths[j]);
                     }
                 }
                 bool ok = Download_Curl(d);//először a metát kell leszedni - header content-length
@@ -136,7 +141,7 @@ bool DownloadManager::TryDownload()
                 for(int j=0;j<d.length();j++){
                     int ix = _filesToDownload.GetPubImageIx(d[j].filename);
                     if(ix>-1){
-                        _filesToDownload.SetLength(ix, lengths[j]);
+                        _filesToDownload.SetItemLength(ix, lengths[j]);
                     }
                 }
                 bool ok = Download_Curl(d);
@@ -150,14 +155,14 @@ bool DownloadManager::TryDownload()
             int ix = _filesToDownload.GetPubImageIx(filename);
             QString fn = downloadDir.filePath(filename);
             qint64 fileSize = QFile(fn).size();
-            qint64 pubImageSize = _filesToDownload.GetLength(ix);
+            qint64 pubImageSize = _filesToDownload.GetItemLength(ix);
             bool downloaded = ix>-1 && (pubImageSize==-1 || fileSize==pubImageSize);
             if(downloaded){
                 _filesToDownload.RemoveAt(ix);
             }
         }
         retVal = true;
-        isDownloading = false;
+        _isDownloading = false;
     }
     return retVal;
 }
@@ -167,6 +172,13 @@ bool DownloadManager::HasDownloads()
     return this->_filesToDownload.ItemCount()>0;
 }
 
+void DownloadManager::On_Timeout(){
+    if(_isDownloading==false){
+        if(HasDownloads()){
+            TryDownload();
+        }
+    }
+}
 
 
 /*

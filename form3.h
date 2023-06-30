@@ -14,7 +14,8 @@ class Form3 : public QWidget
 public:
     explicit Form3(QWidget *parent = nullptr);
     ~Form3();
-    void ShowPicture(const QString& fn);
+    void ShowPicture(const QString& fn,  const QString& sn);
+    void HidePicture();
 
 private slots:
     void on_button_3_clicked();

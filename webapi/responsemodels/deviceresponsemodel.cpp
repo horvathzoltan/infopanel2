@@ -24,7 +24,7 @@ DeviceResponseModel DeviceResponseModel::JsonParse(const QJsonObject &o)
     return d;
 }
 
-const Application* DeviceResponseModel::GetApplication(QUuid id) const
+Application* DeviceResponseModel::GetApplication(QUuid id)
 {
     for(auto&a:this->device.applications){
         if (a.id == id) return &a;

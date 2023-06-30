@@ -47,7 +47,7 @@ void DownloadFiles::AddNewItems(const QList<DownloadFileMetaData> &fileList)
     _lock.unlock();
 }
 
-void DownloadFiles::SetLength(int ix, qint64 length)
+void DownloadFiles::SetItemLength(int ix, qint64 length)
 {
     bool valid = ix>-1 && ix<_pubImageItems.length();
     if(valid){
@@ -55,7 +55,7 @@ void DownloadFiles::SetLength(int ix, qint64 length)
     }
 }
 
-qint64 DownloadFiles::GetLength(int ix)
+qint64 DownloadFiles::GetItemLength(int ix)
 {
     qint64 retVal=-1;
     bool valid = ix>-1 && ix<_pubImageItems.length();

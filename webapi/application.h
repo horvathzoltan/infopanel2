@@ -105,6 +105,8 @@ public:
     Application();
 
     static Application JsonParse(const QJsonObject &jsonObject);
+
+    //void SetAppDataVer(const QString& v){applicationDataVersion = v;}
 };
 
 #endif // APPLICATION_H

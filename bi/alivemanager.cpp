@@ -22,15 +22,22 @@ bool AliveManager::Start()
     return true;
 }
 
+bool AliveManager::Stop()
+{
+    _timer.stop();
+    return true;
+}
+
 void AliveManager::On_Timeout()
 {
     QMutexLocker locker(&_timerMutex);
-    zTrace();
 
     DeviceAliveRequestModel deviceAliveRequest(
         constants.MobileFlexGuid(),
         constants.DeviceId(),
         constants.ApplicationId());
+    deviceAliveRequest.applicationDataVersion = _applicationDataVersion;
+    deviceAliveRequest.applicationVersion = _applicationVersion;
 
     DeviceAliveResponseModel _deviceAliveResponse;
     bool aliveOk = _webApiManager->DeviceAliveRequest(deviceAliveRequest, &_deviceAliveResponse);
@@ -43,6 +50,14 @@ void AliveManager::On_Timeout()
             emit NewApplicationDataRequired();
         }
 
+        if(_deviceAliveResponse.IsNewApplicationAvailable()){
+            emit NewApplicationAvailable();
+        }
+        else if(_deviceAliveResponse.IsNewApplicationRequeired()){
+            emit NewApplicationRequired();
+        }
+
+        emit Alive();
     }
 
 }

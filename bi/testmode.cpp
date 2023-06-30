@@ -11,13 +11,15 @@ extern Constants constants;
 extern Settings settings;
 
 TestMode::TestMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(true),
-    _downloadManager(settings.DownloadDirectory()), _aliveManager(webApiManager)
+    _downloadManager(settings.DownloadDirectory(), settings.DownloadInterval()), _aliveManager(webApiManager)
 {
     _webApiManager = webApiManager;    
 
     connect(&_aliveManager, &AliveManager::NewApplicationDataAvailable, this, &TestMode::On_NewApplicationDataAvailable);
     connect(&_aliveManager, &AliveManager::NewApplicationDataRequired, this, &TestMode::On_NewApplicationDataRequired);
+    connect(&_aliveManager, &AliveManager::Alive, this, &TestMode::On_Alive);
     connect(&_slideshowManager, &SlideshowManager::ChangeImage, this, &TestMode::On_ChangeImage);
+    connect(&_slideshowManager, &SlideshowManager::HideImage, this, &TestMode::On_HideImage);
 
     QList<QScreen*> screens = qApp->screens();
 
@@ -66,6 +68,7 @@ bool TestMode::Start()
     if(valid){        
         zInfo("starting TestMode...");
 
+        //_lastApplicationDataVersion = "Teszt.1";
         //QString deviceId = constants.IsTestMode()?"dca6327492ab":constants.DeviceId();
         
         DeviceRequestModel deviceRequest(
@@ -80,24 +83,28 @@ bool TestMode::Start()
             zInfo(QStringLiteral("deviceName: ")+deviceResponse.device.deviceName);
             //bool isAppValid = _webApiManager->ValidateApplication(deviceResponse);
             _application = _webApiManager->GetApplication(deviceResponse);
-            bool isAppValid = _application!=nullptr;
 
-            zInfo(QStringLiteral("isAppValid:")+(isAppValid?"true":"false"));
+            bool isAppValid = _application!=nullptr;
             if(isAppValid){
                 retVal = true;
+                _aliveManager.SetApplicationDataVersion(_application->applicationDataVersion);
 
-                _lastApplicationVersion=_application->applicationVersion;
-                _lastApplicationDataVersion_Remote=_application->applicationDataVersion;
-
-                // induláskor, az applicationban kapink erről információt
+                // induláskor, az applicationban kapunk erről információt
                 // ha van letöltetlen adat le kell tölteni
                 // ha jött új adat, hozzá kell adni a letöltendőkhöz
-                bool isNewDataAvailable = _lastApplicationDataVersion_Remote != _lastApplicationDataVersion_Local;
+                bool isNewDataAvailable = _application->applicationDataVersion != _lastApplicationDataVersion;
                 if(isNewDataAvailable){
+                    zInfo("isNewDataAvailable:"+_lastApplicationDataVersion+"->"+_application->applicationDataVersion);
                     On_NewApplicationDataRequired();
                 }
+                bool isNewVersionAvailable = _application->applicationVersion != _lastApplicationVersion;
+                if(isNewVersionAvailable){
+                    zInfo("isNewVersionAvailable:"+_lastApplicationVersion+"->"+_application->applicationVersion);
+                    //On_NewApplicationRequired();
+                }
+
                 _aliveManager.Start();
-                _slideshowManager.Start();
+                _slideshowManager.ReStart();
             }
         }else{
             zInfo(_webApiManager->LastErrorMessage());
@@ -119,14 +126,17 @@ bool TestMode::GetPubApplicationData()
     bool pubDataOk = _webApiManager->PubApplicationDataRequest(pubApplicationDataRequest, &pubApplicationDataResponse);
     if(pubDataOk && pubApplicationDataResponse.resultCode == PubApplicationDataResponseModel::Codes::Ok){
         // a verziót letároljuk
-        _lastApplicationDataVersion_Local = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
+        _lastApplicationDataVersion = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
+        _aliveManager.SetApplicationDataVersion(_lastApplicationDataVersion);
 
         auto newPubImageItems = ToFilesToDownload(pubApplicationDataResponse.pubApplicationData.pubImageItems);
         _downloadManager.AddNewFilesToDownload(newPubImageItems);
         QList<SlideShowItem> images = ToFilesToSlideshow(
             pubApplicationDataResponse.pubApplicationData.pubImageItems);
-        _slideshowManager.SetImages(images);
-
+        _slideshowManager.SetImages(_lastApplicationDataVersion, images);
+        if(!_slideshowManager.IsStarted()){
+             _slideshowManager.ReStart();
+        }
     }
     return true;
 }
@@ -158,21 +168,42 @@ QList<SlideShowItem> TestMode::ToFilesToSlideshow(QList<PubImageItem> pubItems)
 }
 
 void TestMode::On_NewApplicationDataAvailable(){
-    zTrace();
+    //zTrace();
+    //_aliveManager.Stop();
     GetPubApplicationData();
+    //_aliveManager.Start();
 }
 
-void TestMode::On_NewApplicationDataRequired(){
-    zTrace();
+void TestMode::On_NewApplicationDataRequired(){    
+    //zTrace();
+    //_aliveManager.Stop();
     GetPubApplicationData();
     bool hasDownloads = _downloadManager.HasDownloads();
     if(hasDownloads){
         bool isDownloadOk = _downloadManager.TryDownload();
         zInfo(QStringLiteral("isDownloadOk:")+(isDownloadOk?"ok":"failed"));
     }
+    //_aliveManager.Start();
+}
+
+void TestMode::On_Alive()
+{
+    bool start = !_slideshowManager.IsStarted() && _slideshowManager.ImagesLength()>0;
+    if(start){
+        _slideshowManager.ReStart();
+    }
 }
 
 void TestMode::On_ChangeImage(){
     QString fn = _slideshowManager.GetCurrentImageName();
-    _w1->ShowPicture(fn);
+    QString sn = _slideshowManager.GetSerieName();
+    int time = _slideshowManager.GetCurrentImageTime();
+    _w1->ShowPicture(fn, sn+":"+QString::number(time)+"sec");
+}
+
+void TestMode::On_HideImage(){
+    //QString fn = _slideshowManager.GetCurrentImageName();
+    //QString sn = _slideshowManager.GetSerieName();
+    int time = _slideshowManager.GetCurrentImageTime();
+    _w1->HidePicture();
 }

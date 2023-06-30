@@ -32,7 +32,7 @@ public:
 public:
     DeviceResponseModel();
     static DeviceResponseModel JsonParse(const QJsonObject& o);
-    const Application* GetApplication(QUuid appid) const;
+    Application* GetApplication(QUuid appid);
 };
 
 #endif // DEVICERESPONSEMODEL_H
