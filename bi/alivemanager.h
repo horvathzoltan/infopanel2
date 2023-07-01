@@ -19,8 +19,8 @@ public:
     AliveManager(WebApiManager *webApiManager);
 
     bool Start();
-    void On_Timeout();
     bool Stop();
+    void On_Timeout();    
     void SetApplicationDataVersion(const QString& v){_applicationDataVersion = v;}
     void SetApplicationVersion(const QString& v){_applicationVersion = v;}
 signals:

@@ -1,9 +1,10 @@
-#ifndef DEVICEALIVEREQUESTMODEL_H
-#define DEVICEALIVEREQUESTMODEL_H
+#ifndef PUBLOGREQUESTMODEL_H
+#define PUBLOGREQUESTMODEL_H
 
+#include "webapi/loguploadmodel.h"
 #include <QUuid>
 
-class DeviceAliveRequestModel
+class PubLogRequestModel
 {
 public:
     /// <summary>
@@ -23,21 +24,17 @@ public:
     QUuid applicationId;// { get; set; }
 
     /// <summary>
-    /// version number of the application currently in use
+    /// The list of log items
     /// </summary>
-    QString applicationVersion;// { get; set; } = string.Empty;
+    QList<LogUploadModel> logItems;// { get; set; } = new List<LogUpload>();
 
-    /// <summary>
-    /// version number of the data, which is currently in use
-    /// </summary>
-    QString applicationDataVersion;// { get; set; } = string.Empty;
 
 public:
-    DeviceAliveRequestModel(QUuid _id,
+    PubLogRequestModel(QUuid _id,
                        const QString& _deviceId,
                        const QUuid& _applicationId);
 
     QString ToJson() const;
 };
 
-#endif // DEVICEALIVEREQUESTMODEL_H
+#endif // PUBLOGREQUESTMODEL_H

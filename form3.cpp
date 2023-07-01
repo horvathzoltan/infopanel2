@@ -65,14 +65,22 @@ void Form3::ShowPicture(const QString& fn, const QString& sn, QUuid id)
         qint64 elapsed = _imageElapsedTimer.elapsed();
         CountImage(elapsed);
 
+        QString oldLogPath;
         if(!_logImage1Path.isEmpty()){
             LogImage2(_logImage1Path,elapsed);
+            oldLogPath=_logImage1Path;
             _logImage1Path.clear();
         }
         ui->label_3->setPixmap(p2);
         _imageElapsedTimer.restart();
         _currentId = id;
         _logImage1Path = LogImage1(_currentId);
+        if(oldLogPath!=_logImage1Path){
+            QFileInfo fi(oldLogPath);
+            QString newFileName = fi.path() + fi.baseName() + ".log";;
+            QFile::rename(oldLogPath, newFileName);
+            zInfo(QStringLiteral("LogFile completed:")+newFileName);
+        }
     }
 }
 
@@ -121,7 +129,7 @@ void Form3::CountImage(qint64 elapsed){
 
 QString Form3::LogImage1(QUuid id){
     auto most = QDateTime::currentDateTimeUtc();
-    QString fn = constants.DeviceId()+'.'+most.date().toString("yyyy.MM.dd")+".log";
+    QString fn = constants.DeviceId()+'.'+most.date().toString("yyyy.MM.dd")+".log_";
     static const QDir logDir(settings.LogDirectory());
     QString filepath = logDir.filePath(fn);
 

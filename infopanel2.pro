@@ -28,6 +28,7 @@ SOURCES += \
     bi/constants.cpp \
     bi/downloadfilemetadata.cpp \
     bi/downloadmanager.cpp \
+    bi/logmanager.cpp \
     bi/mastermode.cpp \
     bi/mode.cpp \
     bi/processrequest.cpp \
@@ -64,10 +65,12 @@ SOURCES += \
     webapi/applicationproblem.cpp \
     webapi/applicationtheme.cpp \
     webapi/device.cpp \
+    webapi/loguploadmodel.cpp \
     webapi/requestmodels/devicealiverequestmodel.cpp \
     webapi/requestmodels/devicerequestmodel.cpp \
     webapi/requestmodels/pubapplicationdatarequestmodel.cpp \
     webapi/pubapplicationdata.cpp \
+    webapi/requestmodels/publogrequestmodel.cpp \
     webapi/responsemodels/devicealiveresponsemodel.cpp \
     webapi/responsemodels/deviceresponsemodel.cpp \
     webapi/pubimageitem.cpp \
@@ -79,6 +82,7 @@ HEADERS += \
     bi/constants.h \
     bi/downloadfilemetadata.h \
     bi/downloadmanager.h \
+    bi/logmanager.h \
     bi/mastermode.h \
     bi/mode.h \
     bi/processrequest.h \
@@ -115,11 +119,13 @@ HEADERS += \
     webapi/applicationproblem.h \
     webapi/applicationtheme.h \
     webapi/device.h \
+    webapi/loguploadmodel.h \
     webapi/requestmodels/devicealiverequestmodel.h \
     webapi/requestmodels/devicerequestmodel.h \
     webapi/requestmodels/pubapplicationdatarequestmodel.h \
     webapi/loginmodes.h \
     webapi/pubapplicationdata.h \
+    webapi/requestmodels/publogrequestmodel.h \
     webapi/responsemodels/devicealiveresponsemodel.h \
     webapi/responsemodels/deviceresponsemodel.h \
     webapi/pubimageitem.h \

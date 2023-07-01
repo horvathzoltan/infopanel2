@@ -16,7 +16,8 @@ private:
     QString _downloadDirectory = QStringLiteral("/home/zoli/pubImageItems");
     QString _counterDirectory = QStringLiteral("/home/zoli/pubImageItemCounters");
     QString _logDirectory = QStringLiteral("/home/zoli/pubImageItemLogs");
-    int _aliveTimeInterval = 1000*5;//5 sec //1000*60*5; // 5 min
+    int _aliveTimeInterval = 1000*2;//5 sec //1000*60*5; // 5 min
+    int _logTimeInterval = 1000*7;//5 sec //1000*60*5; // 5 min
     int _downloadInterval = 3;
 
     static bool ParseMaster(const QString& v, bool *ok);
@@ -31,6 +32,7 @@ private:
     bool Parse_counterDirectory(const QMap<QString, QString>& m);
     bool Parse_downloadInterval(const QMap<QString, QString>& m);
     bool Parse_logDirectory(const QMap<QString, QString>& m);
+    bool Parse_logTimeInterval(const QMap<QString, QString>& m);
 
 public:
     Settings();
@@ -46,6 +48,7 @@ public:
     QString CounterDirectory(){return _counterDirectory;}
     QString LogDirectory(){return _logDirectory;}
     int AliveTimeInterval(){return _aliveTimeInterval;}
+    int LogTimeInterval(){return _logTimeInterval;}
 };
 
 #endif // SETTINGS_H

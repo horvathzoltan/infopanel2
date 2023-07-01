@@ -164,7 +164,6 @@ QList<SlideShowItem> TestMode::ToFilesToSlideshow(QList<PubImageItem> pubItems)
 {
     QList<SlideShowItem> retVal;
     QDir downloadDir(settings.DownloadDirectory());
-    //auto filenamelist = downloadDir.entryList(QDir::Files);
 
     for(auto&a:pubItems){        
         QString fn = downloadDir.filePath(a.id.toString(QUuid::WithoutBraces));

@@ -191,3 +191,18 @@ bool Settings::Parse_downloadInterval(const QMap<QString, QString> &m)
 }
 
 
+bool Settings::Parse_logTimeInterval(const QMap<QString, QString> &m)
+{
+    bool retVal=false;
+    QString v = "";
+    bool isMode = IniHelper::TryGetValue(m, "logTimeInterval", &v);
+    if(isMode && !v.isEmpty()){
+        bool parse_ok;
+        int v_parsed = v.toInt(&parse_ok);
+        if(parse_ok && v_parsed>1*60*1000 && v_parsed<60*60*1000){
+            this->_logTimeInterval = v_parsed;
+            retVal = true;
+        }
+    }
+    return retVal;
+}

@@ -1,5 +1,4 @@
 #include "alivemanager.h"
-#include "helpers/logger.h"
 #include "constants.h"
 #include "settings.h"
 #include "webapi/requestmodels/devicealiverequestmodel.h"
@@ -17,15 +16,25 @@ AliveManager::AliveManager(WebApiManager *webApiManager)
 
 bool AliveManager::Start()
 {
-    _timer.setInterval(settings.AliveTimeInterval());
-    _timer.start();
-    return true;
+    bool valid = !_timer.isActive();
+    bool retVal = false;
+    if(valid){
+        _timer.setInterval(settings.AliveTimeInterval());
+        _timer.start();
+        retVal = true;
+    }
+    return retVal;
 }
 
 bool AliveManager::Stop()
 {
-    _timer.stop();
-    return true;
+    bool valid = _timer.isActive();
+    bool retVal = false;
+    if(valid){
+        _timer.stop();
+        retVal = true;
+    }
+    return retVal;
 }
 
 void AliveManager::On_Timeout()
