@@ -33,7 +33,23 @@ LogUploadModel LogUploadModel::Parse(const QString &txt)
     LogUploadModel e;
     bool valid = !txt.isEmpty();
     if(valid){
-
+        QStringList tokens = txt.split(';');
+        bool valid2 = tokens.length()>=3;
+        if(valid2){
+            bool ok;
+            QUuid v0 =  QUuid::fromString(tokens[0]);
+            if(v0.isNull()){
+                e.id = v0;
+            }
+            QDateTime v1 = QDateTime::fromString(tokens[1], Qt::DateFormat::ISODateWithMs);
+            if(v1.isValid()){
+                e.displayTimeStamp=v1;
+            }
+            int v2 = tokens[2].toInt(&ok);
+            if(ok){
+                e.seconds = v2;
+            }
+        }
     }
     return e;
 }
