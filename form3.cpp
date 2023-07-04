@@ -3,7 +3,8 @@
 #include "ui_form3.h"
 #include <QDate>
 #include <QDebug>
-#include <QDir>
+//#include <QDir>
+#include <QFileInfo>
 #include <QPicture>
 #include <QScreen>
 #include <QString>
@@ -11,6 +12,7 @@
 #include "helpers/textfilehelper.h"
 #include "settings.h"
 #include "bi/constants.h"
+#include "bi/filenamehelper.h"
 
 extern Settings settings;
 extern Constants constants;
@@ -102,8 +104,10 @@ void Form3::CountImage(qint64 elapsed){
     bool hasPrevImage = !_currentId.isNull();
     if(hasPrevImage){
         QString fn = _currentId.toString(QUuid::WithoutBraces);
-        static const QDir countDir(settings.CounterDirectory());
-        QString filepath = countDir.filePath(fn);
+//        static const QDir countDir(settings.CounterDirectory());
+//        QString filepath = countDir.filePath(fn);
+
+        QString filepath = FileNameHelper::GetCounterFileName(fn);
 
         QString msg = QStringLiteral("imageCounter(%1): %2ms").arg(fn).arg(elapsed);
         zInfo(msg);
@@ -130,8 +134,8 @@ void Form3::CountImage(qint64 elapsed){
 QString Form3::LogImage1(QUuid id){
     auto most = QDateTime::currentDateTimeUtc();
     QString fn = constants.DeviceId()+'.'+most.date().toString("yyyy.MM.dd")+".log_";
-    static const QDir logDir(settings.LogDirectory());
-    QString filepath = logDir.filePath(fn);
+    //static const QDir logDir(settings.LogDirectory());
+    QString filepath = FileNameHelper::GetLogFileName(fn);
 
     QChar a = TextFileHelper::GetLastChar(filepath);
     QString msg((a!='\n')?"":"\n");

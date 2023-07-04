@@ -1,6 +1,7 @@
 #ifndef WEBAPIMANAGER_H
 #define WEBAPIMANAGER_H
 
+#include "settings.h"
 #include "webapi/applicationproblem.h"
 #include "webapi/requestmodels/devicealiverequestmodel.h"
 #include "webapi/requestmodels/devicerequestmodel.h"
@@ -12,6 +13,8 @@
 #include <QJsonDocument>
 #include "helpers/httpresponse.h"
 #include <helpers/processhelper.h>
+
+extern Settings settings;
 
 class WebApiManager
 {
@@ -87,7 +90,7 @@ public:
 
             //QString cmd = GetServiceCommand(QStringLiteral("Device"), requestModel.ToJson());
 
-            ProcessHelper::Output out = ProcessHelper::ShellExecute(cmd);
+            ProcessHelper::Output out = ProcessHelper::ShellExecute(cmd, settings.RequestTimeout()*1000);
 
             bool ok = out.exitCode==0;
             if(ok){

@@ -11,19 +11,19 @@ class SlideshowManager : public QObject
 {
     Q_OBJECT
 
-private:
-    static const QString FILENAME;
-
+private:   
     QTimer _timer;
     QList<SlideShowItem> _images;
     QReadWriteLock _imagesLock;
     int _currentIx;
     QString _serieName;
+    QString _downloadDirectory;
 
 public:
     SlideshowManager();
     void On_Timeout();
     bool ReStart();
+    bool Stop();
     bool IsStarted(){return _timer.isActive(); };
     void SetImages(const QString& fn, const QList<SlideShowItem>& images);
     void Next();
@@ -34,6 +34,7 @@ public:
     int ImagesLength();
     bool Save();
     bool Load();
+    QString GetFn();
 signals:
     void ChangeImage();
     void HideImage();

@@ -11,7 +11,7 @@ extern Constants constants;
 extern Settings settings;
 
 TestMode::TestMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(true),
-    _downloadManager(settings.DownloadDirectory(), settings.DownloadInterval()), _aliveManager(webApiManager)
+    _downloadManager(), _aliveManager(webApiManager)
 {
     _webApiManager = webApiManager;    
 
@@ -30,11 +30,11 @@ TestMode::TestMode(WebApiManager* webApiManager, QObject*p): QObject(p), Mode(tr
         }
 
         bool isFullScreen = settings.SlaveFullSize();
-        if(screens.length()>=1){
+        if(screens.length()>=2){
             _w1 = new Form3();
-            if(isFullScreen){
-                QScreen *screen = screens[0];
-                _w1->move(screen->geometry().x(), screen->geometry().y());
+            QScreen *screen = screens[1];
+            _w1->move(screen->geometry().x(), screen->geometry().y());
+            if(isFullScreen){                
                 _w1->resize(screen->geometry().width(), screen->geometry().height());
                 _w1->showFullScreen();
             } else {
@@ -81,6 +81,7 @@ bool TestMode::Start()
         DeviceResponseModel deviceResponse;
         bool ok = _webApiManager->DeviceRequest(deviceRequest, &deviceResponse);
         if(ok){
+            // online mode
             zInfo(QStringLiteral("deviceResponse: ")+QString::number(deviceResponse.resultCode));
             zInfo(QStringLiteral("deviceName: ")+deviceResponse.device.deviceName);
             //bool isAppValid = _webApiManager->ValidateApplication(deviceResponse);
@@ -105,11 +106,18 @@ bool TestMode::Start()
                     //On_NewApplicationRequired();
                 }
 
+                _cecManager.Start();
                 _aliveManager.Start();
                 _slideshowManager.ReStart();
+                _logManager.Start();
             }
         }else{
-            zInfo(_webApiManager->LastErrorMessage());
+            // offline mode
+            zInfo(_webApiManager->LastErrorMessage()); // ebben van ok ami miatt nem online
+
+            _slideshowManager.ReStart();
+            _cecManager.Start();
+            retVal = true;
         }
 
     }
@@ -117,7 +125,12 @@ bool TestMode::Start()
 }
 
 bool TestMode::Stop(){
-    //_slideshowManager.Stop();
+    _slideshowManager.Stop();
+    _downloadManager.Stop();
+    _aliveManager.Stop();
+    _cecManager.Stop();
+    _logManager.Stop();
+
     _w1->HidePicture();
     return true;
 }

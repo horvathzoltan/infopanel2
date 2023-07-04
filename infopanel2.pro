@@ -25,15 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     bi/alivemanager.cpp \
     bi/cechelper.cpp \
+    bi/cecmanager.cpp \
     bi/constants.cpp \
     bi/downloadfilemetadata.cpp \
     bi/downloadmanager.cpp \
     bi/logmanager.cpp \
-    bi/mastermode.cpp \
     bi/mode.cpp \
     bi/processrequest.cpp \
     bi/pubimages.cpp \
-    bi/slavemode.cpp \
     bi/slideshowitem.cpp \
     bi/slideshowmanager.cpp \
     bi/tcpsocketclient.cpp \
@@ -43,7 +42,7 @@ SOURCES += \
     global.cpp \
     helpers/commandlineparserhelper.cpp \
     helpers/downloader.cpp \
-    helpers/filenamehelper.cpp \
+    bi/filenamehelper.cpp \
     helpers/httpresponse.cpp \
     helpers/inihelper.cpp \
     helpers/jsonvaluehelper.cpp \
@@ -79,15 +78,14 @@ SOURCES += \
 HEADERS += \
     bi/alivemanager.h \
     bi/cechelper.h \
+    bi/cecmanager.h \
     bi/constants.h \
     bi/downloadfilemetadata.h \
     bi/downloadmanager.h \
     bi/logmanager.h \
-    bi/mastermode.h \
     bi/mode.h \
     bi/processrequest.h \
     bi/pubimages.h \
-    bi/slavemode.h \
     bi/slideshowitem.h \
     bi/slideshowmanager.h \
     bi/tcpsocketclient.h \
@@ -97,7 +95,7 @@ HEADERS += \
     global.h \
     helpers/commandlineparserhelper.h \
     helpers/downloader.h \
-    helpers/filenamehelper.h \
+    bi/filenamehelper.h \
     helpers/httpresponse.h \
     helpers/inihelper.h \
     helpers/jsonvaluehelper.h \

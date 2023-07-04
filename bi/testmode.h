@@ -5,10 +5,12 @@
 #include <QObject>
 #include "bi/downloadmanager.h"
 #include "alivemanager.h"
+#include "bi/logmanager.h"
 #include "bi/slideshowitem.h"
 #include "bi/slideshowmanager.h"
 #include "mode.h"
 #include "webapimanager.h"
+#include "cecmanager.h"
 
 #include "form3.h"
 //#include "frame2.h"
@@ -22,7 +24,11 @@ private:
     DownloadManager _downloadManager;
     AliveManager _aliveManager;
     SlideshowManager _slideshowManager;
+    LogManager _logManager;
+    CecManager _cecManager;
+
     DownloadFiles _pubImages;
+
 
     QString _lastApplicationDataVersion;
     //QString _lastApplicationDataVersion_Remote;

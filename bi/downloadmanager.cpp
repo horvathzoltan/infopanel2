@@ -2,19 +2,44 @@
 #include "helpers/logger.h"
 #include "helpers/processhelper.h"
 #include "helpers/httpresponse.h"
+#include "bi/filenamehelper.h"
 
-#include <QDir>
+#include "constants.h"
+#include "settings.h"
+extern Settings settings;
+extern Constants constants;
 
 bool DownloadManager::_isDownloading = false;
 
-DownloadManager::DownloadManager(const QString &downloadFolder, int downloadInterval)
+DownloadManager::DownloadManager()
 {
-    _downloadFolder = downloadFolder;
-    //_pubImages = pubImages;
-    _timer.setInterval(downloadInterval*1000*60);
     connect(&_timer, &QTimer::timeout, this, &DownloadManager::On_Timeout);
     _timer.start();
 }
+
+bool DownloadManager::Start()
+{
+    bool valid = !_timer.isActive();
+    bool retVal = false;
+    if(valid){
+        _timer.setInterval(settings.DownloadInterval()*1000);
+        _timer.start();
+        retVal = true;
+    }
+    return retVal;
+}
+
+bool DownloadManager::Stop()
+{
+    bool valid = _timer.isActive();
+    bool retVal = false;
+    if(valid){
+        _timer.stop();
+        retVal = true;
+    }
+    return retVal;
+}
+
 
 void DownloadManager::AddNewFilesToDownload(const QList<DownloadFileMetaData> &fileList)
 {
@@ -39,7 +64,7 @@ QString DownloadManager::GetDownload_CurlCommand(const QList<DownloadFileMetaDat
 
             zInfo(INF.arg(a.url).arg(a.filename).arg(counter++));
         }
-        retVal = CMD.arg(args).arg(_downloadFolder);
+        retVal = CMD.arg(args).arg(FileNameHelper::GetDownloadFolder());
     }
     zInfo("cmd:"+retVal);
     return retVal;
@@ -77,7 +102,7 @@ QString DownloadManager::GetDownloadMeta_CurlCommand(const QList<DownloadFileMet
 
             zInfo(INF.arg(a.url).arg(a.filename).arg(counter++));
         }
-        retVal = CMD.arg(args).arg(_downloadFolder);
+        retVal = CMD.arg(args).arg(FileNameHelper::GetDownloadFolder());
     }
     zInfo("cmd:"+retVal);
     return retVal;
@@ -112,9 +137,10 @@ bool DownloadManager::TryDownload()
     bool retVal = false;
     if(_isDownloading==false){
         _isDownloading = true;
-        QDir downloadDir(_downloadFolder);
-        auto filenamelist = downloadDir.entryList(QDir::Files);
+//        QDir downloadDir(_downloadFolder);
+//        auto filenamelist = downloadDir.entryList(QDir::Files);
 
+        auto filenamelist = FileNameHelper::GetDownloadFolderContent();
         QList<DownloadFileMetaData> download = _filesToDownload.ExcludeList(filenamelist);
 
         int N=5;
@@ -149,12 +175,12 @@ bool DownloadManager::TryDownload()
         }
 
         //ami lejött, azt kiszedjük a listából
-        filenamelist = downloadDir.entryList(QDir::Files);
+        filenamelist = FileNameHelper::GetDownloadFolderContent();//downloadDir.entryList(QDir::Files);
         //QDir downloadDir = QDir(_downloadFolder);
         for(auto&filename:filenamelist){
             int ix = _filesToDownload.GetPubImageIx(filename);
-            QString fn = downloadDir.filePath(filename);
-            qint64 fileSize = QFile(fn).size();
+            QString fn = FileNameHelper::GetDownloadFileName(filename);//downloadDir.filePath(filename);
+            qint64 fileSize = FileNameHelper::GetFileSize(fn);//QFile(fn).size();
             qint64 pubImageSize = _filesToDownload.GetItemLength(ix);
             bool downloaded = ix>-1 && (pubImageSize==-1 || fileSize==pubImageSize);
             if(downloaded){

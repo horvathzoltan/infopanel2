@@ -11,7 +11,7 @@ class DownloadManager : public QObject
     Q_OBJECT
 
 private:
-    QString _downloadFolder;
+    //QString _downloadFolder;
     DownloadFiles _filesToDownload;
 
     QString GetDownload_CurlCommand(const QList<DownloadFileMetaData> &filelist);
@@ -21,7 +21,9 @@ private:
     static bool _isDownloading;
 
 public:
-    DownloadManager(const QString &downloadFolder, int downloadInterval);
+    DownloadManager();//int downloadInterval);
+    bool Start();
+    bool Stop();
 //    void Init(const QString& downloadFolder);
     void AddNewFilesToDownload(const QList<DownloadFileMetaData>& fileList);
     bool Download_Curl(const QList<DownloadFileMetaData>& filelist);
@@ -29,6 +31,7 @@ public:
     bool TryDownload();
     bool HasDownloads();
     void On_Timeout();
+
 };
 
 #endif // DOWNLOADMANAGER_H

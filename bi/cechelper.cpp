@@ -7,11 +7,17 @@
 #include <QApplication>
 //cec-client -l
 
+QString CECHelper::GetDevice(int device){
+    return QStringLiteral("/dev/cec")+QString::number(device);
+}
+
 // /bin/sh -c echo "pow 0" | cec-client -s -d 2 /dev/cec1
-int CECHelper::GetPowerState()
+int CECHelper::GetPowerState(int device)
 {
-    const QString CMD = QStringLiteral("echo \"pow 0\" | cec-client -s -d 2 /dev/cec1");
-    auto o = ProcessHelper::ShellExecute(CMD);
+    QString dev = GetDevice(device);
+
+    const QString CMD = QStringLiteral("echo \"pow 0\" | cec-client -s -d 2 %1");
+    auto o = ProcessHelper::ShellExecute(CMD.arg(GetDevice(device)));
     if(!o.stdErr.isEmpty()) return -1;
 
     auto value = GetValue(o.stdOut, QStringLiteral("power status"), ':');
@@ -24,15 +30,17 @@ int CECHelper::GetPowerState()
     return -1;
 }
 
-bool CECHelper::SetPowerState(int v)
+bool CECHelper::SetPowerState(int device, int v)
 {
     bool retVal=false;
     bool valid = v==1 || v==0;
     if(valid) {
-        const QString CMD_ON = QStringLiteral("echo \"on 0\" | cec-client -s -d 2 /dev/cec1");
-        const QString CMD_OFF = QStringLiteral("echo \"standby 0\" | cec-client -s -d 2 /dev/cec1");
+        QString dev = GetDevice(device);
 
-        auto o = ProcessHelper::ShellExecute(v==1?CMD_ON:CMD_OFF);
+        const QString CMD_ON = QStringLiteral("echo \"on 0\" | cec-client -s -d 2 %1");
+        const QString CMD_OFF = QStringLiteral("echo \"standby 0\" | cec-client -s -d 2 %1");
+
+        auto o = ProcessHelper::ShellExecute(v==1?CMD_ON.arg(GetDevice(device)):CMD_OFF.arg(GetDevice(device)));
         bool ok = o.stdErr.isEmpty() && o.exitCode==0;
 
         retVal = ok;
@@ -59,7 +67,7 @@ QString CECHelper::GetValue(const QString& str, const QString& token,const QChar
 
 // echo "pow 0" | cec-client -s -d 2 /dev/cec1
 
-bool CECHelper::GetPowerState_2()
+bool CECHelper::GetPowerState_2(int device)
 {
     //QString cmd1 = QStringLiteral("echo 'pow 0' | cec-client -s -d 2 /dev/cec1");
     //ProcessHelper::Model m1 = ProcessHelper::Model::Parse(QStringLiteral("echo 'pow 0'"));
@@ -94,7 +102,8 @@ bool CECHelper::GetPowerState_2()
 
     process1.start("echo", {"\"pow 0\""});
     //process2.start("cec-client", {"-s","-d","2","/dev/cec1"});
-    process2.start("cec-client", {"-s","\"-d 2\"","/dev/cec1"});
+    QString dev = GetDevice(device);
+    process2.start("cec-client", {"-s","\"-d 2\"",dev});
     process2.setProcessChannelMode(QProcess::ForwardedChannels);
 
     // Wait for it to start

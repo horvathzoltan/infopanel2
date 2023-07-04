@@ -12,15 +12,16 @@ extern Constants constants;
 
 LogManager::LogManager()
 {
-
+    connect(&_timer, &QTimer::timeout, this, &LogManager::On_Timeout);
 }
 
 bool LogManager::Start()
 {
+    return true;
     bool valid = !_timer.isActive();
     bool retVal = false;
     if(valid){
-        _timer.setInterval(settings.LogTimeInterval());
+        _timer.setInterval(settings.LogTimeInterval()*1000);
         _timer.start();
         retVal = true;
     }
@@ -29,6 +30,7 @@ bool LogManager::Start()
 
 bool LogManager::Stop()
 {
+    return true;
     bool valid = _timer.isActive();
     bool retVal = false;
     if(valid){

@@ -58,7 +58,7 @@ void MasterMode::On_Timeout()
 {
     QMutexLocker locker(&_timerMutex);
     zInfo(QStringLiteral("On_Timeout: %1").arg(_counter++));
-    int pow = CECHelper::GetPowerState();
+    int pow = CECHelper::GetPowerState(0);
     QString cmd = QStringLiteral("pow:")+QString::number(pow);
 
     QString response = _tcpSocketSender->Send(cmd);

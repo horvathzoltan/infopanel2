@@ -19,7 +19,7 @@ bool AliveManager::Start()
     bool valid = !_timer.isActive();
     bool retVal = false;
     if(valid){
-        _timer.setInterval(settings.AliveTimeInterval());
+        _timer.setInterval(settings.AliveTimeInterval()*1000);
         _timer.start();
         retVal = true;
     }

@@ -1,6 +1,6 @@
 #include "bi/mode.h"
-#include "bi/mastermode.h"
-#include "bi/slavemode.h"
+//#include "bi/mastermode.h"
+//#include "bi/slavemode.h"
 #include "bi/testmode.h"
 
 #include <QApplication>
@@ -16,7 +16,7 @@
 #include "helpers/commandlineparserhelper.h"
 #include "helpers/signalhelper.h"
 #include "helpers/logger.h"
-#include "helpers/filenamehelper.h"
+#include "bi/filenamehelper.h"
 
 #include "settings.h"
 #include "bi/constants.h"
@@ -61,19 +61,19 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
 
     const QString OPTION_TEST = QStringLiteral("test");
-    const QString OPTION_MASTER = QStringLiteral("master");
+    //const QString OPTION_MASTER = QStringLiteral("master");
 
     CommandLineParserHelper::addOption(&parser, OPTION_TEST, QStringLiteral("command or command list to test"));
-    CommandLineParserHelper::addOptionBool(&parser, OPTION_MASTER, QStringLiteral("set master mode is exists"));
+    //CommandLineParserHelper::addOptionBool(&parser, OPTION_MASTER, QStringLiteral("set master mode is exists"));
 
     parser.process(app);
 
     QString test = parser.value(OPTION_TEST);
-    bool hasMasterOption = parser.isSet(OPTION_MASTER);
-    bool isMasterMode = hasMasterOption?true:settings.MasterMode();
+    //bool hasMasterOption = parser.isSet(OPTION_MASTER);
+    //bool isMasterMode = hasMasterOption?true:settings.MasterMode();
 
     zInfo("test: "+test);
-    zInfo("isMasterMode: " + QString::number(isMasterMode));
+    //zInfo("isMasterMode: " + QString::number(isMasterMode));
 
     WebApiManager webApiManager(settings.ApiLocation());
 
@@ -87,26 +87,30 @@ int main(int argc, char *argv[])
         QDir().mkpath(logDir.absolutePath());
     }
 
-    SlaveMode *slaveMode=nullptr;
-    MasterMode *masterMode=nullptr;
+    //SlaveMode *slaveMode=nullptr;
+    //MasterMode *masterMode=nullptr;
     TestMode *testMode=nullptr;
 #ifdef RASPBERRY_PI
-    if(isMasterMode)
-    {
-        zInfo("entering MasterMode...");
-        masterMode = new MasterMode(&webApiManager);
-        masterMode->Start();
+//    if(isMasterMode)
+//    {
+//        zInfo("entering MasterMode...");
+//        masterMode = new MasterMode(&webApiManager);
+//        masterMode->Start();
 
-        zInfo("Mode: " + QString::number(masterMode->IsMater()));
-    }
-    else
-    {
-        zInfo("entering SlaveMode...");
-        slaveMode = new SlaveMode(&webApiManager);
-        slaveMode->Init();
+//        zInfo("Mode: " + QString::number(masterMode->IsMater()));
+//    }
+//    else
+//    {
+//        zInfo("entering SlaveMode...");
+//        slaveMode = new SlaveMode(&webApiManager);
+//        slaveMode->Init();
 
-        zInfo("Mode: " + QString::number(slaveMode->IsMater()));
-    }
+//        zInfo("Mode: " + QString::number(slaveMode->IsMater()));
+//    }
+    zInfo("entering TestMode...");
+    constants.SetTestMode(true);
+    testMode = new TestMode(&webApiManager);
+    bool isStarted = testMode->Start();
 #else
     zInfo("entering TestMode...");
     constants.SetTestMode(true);
@@ -127,8 +131,8 @@ int main(int argc, char *argv[])
     }
     zInfo("ExitCode: " + QString::number(e));
 
-    delete(slaveMode);
-    delete(masterMode);
+   // delete(slaveMode);
+   // delete(masterMode);
     delete(testMode);
     return e;
 }

@@ -1,12 +1,12 @@
 #include "slideshowmanager.h"
 #include "helpers/logger.h"
+#include "bi/filenamehelper.h"
 #include "helpers/textfilehelper.h"
 
 SlideshowManager::SlideshowManager()
 {
     _timer.setSingleShot(true);
     connect(&_timer, &QTimer::timeout, this, &SlideshowManager::On_Timeout);
-    // todo ha van fájl, felolvasni
     Load();
 }
 
@@ -14,6 +14,15 @@ bool SlideshowManager::ReStart()
 {
     _currentIx = -1;
     Next();
+    return true;
+}
+
+bool SlideshowManager::Stop()
+{
+    _currentIx = -1;
+    if(_timer.isActive()){
+        _timer.stop();
+    }
     return true;
 }
 
@@ -34,9 +43,8 @@ void SlideshowManager::SetImages(const QString& serieName, const QList<SlideShow
     }
 }
 
-const QString SlideshowManager::FILENAME = QStringLiteral("SlideshowManager.ini");
-
 bool SlideshowManager::Save(){
+    bool retVal = false;
 
     _imagesLock.lockForRead();
     QString txt;
@@ -49,44 +57,55 @@ bool SlideshowManager::Save(){
                   "images="+txt+'\n';
     _imagesLock.unlock();
 
-    bool ok = TextFileHelper::Save(content, FILENAME, false);
+    QString fn = FileNameHelper::GetSlideShowFileName();
+    bool fileNameOk = !fn.isEmpty();
+    if(fileNameOk){
+        bool ok = TextFileHelper::Save(content, fn, false);
+        if(ok){
+            retVal = true;
+        }
+    }
 
-    return ok;
+    return retVal;
 }
 
 bool SlideshowManager::Load(){
     QStringList lines;
-    bool ok = TextFileHelper::LoadLines(FILENAME, &lines);
+    QString fn = FileNameHelper::GetSlideShowFileName();
+    bool fileNameOk = !fn.isEmpty();
     bool retVal = false;
-    if(ok && !lines.isEmpty()){
-        _imagesLock.lockForWrite();
-        for(auto&a:lines){
-            bool validLine = !a.isEmpty() && !a.startsWith('#');
-            if(validLine){
-                int ix = a.indexOf('=');
-                if(ix>0){
-                    QString key = a.left(ix);
-                    QString value = a.mid(ix+1);
+    if(fileNameOk){
+        bool ok = TextFileHelper::LoadLines(fn, &lines);
+        if(ok && !lines.isEmpty()){
+            _imagesLock.lockForWrite();
+            for(auto&a:lines){
+                bool validLine = !a.isEmpty() && !a.startsWith('#');
+                if(validLine){
+                    int ix = a.indexOf('=');
+                    if(ix>0){
+                        QString key = a.left(ix);
+                        QString value = a.mid(ix+1);
 
-                    if(key=="serieName"){
+                        if(key=="serieName"){
 
-                        _serieName = value;
-                    } else if(key =="currentIx"){
-                        bool iok;
-                        int iv = value.toInt(&iok);
-                        if(iok){
-                            _currentIx = iv;
-                        }
-                    } else if(key == "images"){
-                        auto ilines = value.split('|');
-                        for(auto&iline:ilines){
-                            SlideShowItem image;
-                            bool ok = SlideShowItem::TryParse(iline, &image);
-                            if(ok){
-                                _images.append(image);
+                            _serieName = value;
+                        } else if(key =="currentIx"){
+                            bool iok;
+                            int iv = value.toInt(&iok);
+                            if(iok){
+                                _currentIx = iv;
                             }
-                        }
+                        } else if(key == "images"){
+                            auto ilines = value.split('|');
+                            for(auto&iline:ilines){
+                                SlideShowItem image;
+                                bool ok = SlideShowItem::TryParse(iline, &image);
+                                if(ok){
+                                    _images.append(image);
+                                }
+                            }
 
+                        }
                     }
                 }
             }

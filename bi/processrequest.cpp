@@ -40,7 +40,7 @@ bool ProcessRequest::PowCmd(const QString &value)
     bool parse_ok, retVal = false;
     int v = value.toInt(&parse_ok);
     if(parse_ok){
-        retVal = CECHelper::SetPowerState(v);
+        retVal = CECHelper::SetPowerState(1, v);
     }
     zInfo("PowCmd: "+value + ' '+ (retVal?"ok":"failed"));
     return true;
