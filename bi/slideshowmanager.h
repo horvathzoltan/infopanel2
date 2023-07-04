@@ -16,6 +16,8 @@ private:
     QList<SlideShowItem> _images;
     QReadWriteLock _imagesLock;
     int _currentIx;
+    int _remainingTime;
+    int _remainingIx;
     QString _serieName;
     QString _downloadDirectory;
 
@@ -35,6 +37,11 @@ public:
     bool Save();
     bool Load();
     QString GetFn();
+    bool SaveState();
+    bool LoadState();
+    //bool ShowCurrent();
+    bool DelState();
+    void SaveImages();
 signals:
     void ChangeImage();
     void HideImage();

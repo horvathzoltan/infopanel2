@@ -113,7 +113,8 @@ int main(int argc, char *argv[])
     bool isStarted = testMode->Start();
 #else
     zInfo("entering TestMode...");
-    constants.SetTestMode(true);
+    bool isTestMode = settings.TestMode();
+    constants.SetTestMode(isTestMode);
     testMode = new TestMode(&webApiManager);
     bool isStarted = testMode->Start();
 #endif

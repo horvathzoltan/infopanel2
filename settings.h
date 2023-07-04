@@ -11,16 +11,18 @@ private:
     //QHostAddress _slaveHostAddress;
     //qint16 _slavePort=8081;
     bool _slaveFullSize = false;
+    bool _testMode = false;
     QString _apiLocation = QStringLiteral("https://api.mobileflex.hu");
     QString _deviceName = QStringLiteral("deviceName");
     QString _downloadDirectory = QStringLiteral("/home/zoli/pubImageItems");
     QString _counterDirectory = QStringLiteral("/home/zoli/pubImageItemCounters");
     QString _logDirectory = QStringLiteral("/home/zoli/pubImageItemLogs");
-    int _aliveTimeInterval = 7;//sec //1000*60*5 = 5 min
-    int _logTimeInterval = 6;//sec//1000*60*5 = 5 min
-    int _cecTimeInterval = 5;//sec // 1000*60*5 = 5 min
+    int _aliveTimeInterval = 60;//sec //1000*60*5 = 5 min
+    int _logTimeInterval = 120;//sec//1000*60*5 = 5 min
+    int _cecTimeInterval = 10;//sec // 1000*60*5 = 5 min
     int _downloadInterval = 60;//sec
     int _requestTimeout = 4;//sec
+    bool _cecManagerVerbose = false;
 
     //static bool ParseMaster(const QString& v, bool *ok);
     static bool ParseBool(const QString& v, bool *ok);
@@ -43,7 +45,8 @@ private:
     bool Parse_aliveTimeInterval(const QMap<QString, QString>& m);                
     bool Parse_cecTimeInterval(const QMap<QString, QString>& m);
 
-
+    bool Parse_testMode(const QMap<QString, QString>& m);
+    bool Parse_cecManagerVerbose(const QMap<QString, QString>& m);
 public:
     Settings();
     bool Load(const QString& fn);
@@ -61,6 +64,8 @@ public:
     int LogTimeInterval(){return _logTimeInterval;}
     int CecTimeInterval(){return _cecTimeInterval;}
     int RequestTimeout(){return _requestTimeout;}
+    bool TestMode(){return _testMode;}
+    bool CecManagerVerbose(){return _cecManagerVerbose;}
 };
 
 #endif // SETTINGS_H

@@ -50,6 +50,8 @@ public:
     void On_NewApplicationDataAvailable();
     void On_NewApplicationDataRequired();
     void On_Alive();
+    void On_PowerOn();
+    void On_PowerOff();
     static QList<DownloadFileMetaData> ToFilesToDownload(QList<PubImageItem> pubItems);
     static QList<SlideShowItem> ToFilesToSlideshow(QList<PubImageItem> pubItems);
     void On_ChangeImage();

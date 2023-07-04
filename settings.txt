@@ -11,3 +11,7 @@ mode=false
 slaveIp=10.10.10.100
 slavePort=8081
 slaveFullSize=false
+
+settings.ini
+testMode=true
+cecManagerVerbose=true

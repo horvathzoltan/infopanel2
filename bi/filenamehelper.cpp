@@ -24,6 +24,19 @@ QString FileNameHelper::SettingsFileName()
     return QDir(_appDir).filePath("settings.ini");
 }
 
+
+QString FileNameHelper::GetSlideShowStateFileName(){
+    if(!_inited) return {};
+    return QDir(settings.DownloadDirectory()).filePath("SlideshowManagerState.ini");
+}
+
+void FileNameHelper::DeleteFile(const QString& fn)
+{
+    if(!_inited) return;
+    QFile::remove(fn);
+}
+
+
 QString FileNameHelper::GetSlideShowFileName(){
     if(!_inited) return {};
     return QDir(settings.DownloadDirectory()).filePath("SlideshowManager.ini");

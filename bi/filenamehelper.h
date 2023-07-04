@@ -18,6 +18,8 @@ public:
     static QStringList GetDownloadFolderContent();
     static QString GetDownloadFileName(const QString &fn);
     static qint64 GetFileSize(const QString &fn);
+    static QString GetSlideShowStateFileName();
+    static void DeleteFile(const QString &fn);
 };
 
 #endif // FILENAMEHELPER_H

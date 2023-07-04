@@ -20,8 +20,7 @@ public:
     QUuid MobileFlexGuid(){return _mobileFlexGuid;}
     //QString DeviceId(){return _deviceId;}
 
-    QString DeviceId(){return _deviceId;}
-        //{ return IsTestMode()?_piDeviceId:_deviceId;}
+    QString DeviceId(){ return IsTestMode()?_piDeviceId:_deviceId;}
     QUuid ApplicationId(){return _applicationId;}
 
     bool IsTestMode(){return _isTestMode;}

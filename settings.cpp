@@ -35,6 +35,9 @@ bool Settings::Load(const QString &fn)
             // intervals
             Settings::Parse_aliveTimeInterval(m);
             Settings::Parse_cecTimeInterval(m);
+
+            Settings::Parse_testMode(m);
+            Settings::Parse_cecManagerVerbose(m);
             retVal = true;
         }
     }
@@ -250,3 +253,34 @@ bool Settings::Parse_requestTimeout(const QMap<QString, QString> &m)
     }
     return retVal;
 }
+
+bool Settings::Parse_testMode(const QMap<QString, QString>& m){
+    bool retVal=false;
+    QString v = "";
+    bool isMode = IniHelper::TryGetValue(m, "testMode", &v);
+    if(isMode && !v.isEmpty()){
+        bool parse_ok;
+        bool v_parsed = ParseBool(v, &parse_ok);
+        if(parse_ok){
+            this->_testMode = v_parsed;
+        }
+    }
+    return retVal;
+}
+
+bool Settings::Parse_cecManagerVerbose(const QMap<QString, QString> &m)
+{
+    bool retVal=false;
+    QString v = "";
+    bool isMode = IniHelper::TryGetValue(m, "cecManagerVerbose", &v);
+    if(isMode && !v.isEmpty()){
+        bool parse_ok;
+        bool v_parsed = ParseBool(v, &parse_ok);
+        if(parse_ok){
+            this->_cecManagerVerbose = v_parsed;
+        }
+    }
+    return retVal;
+}
+
+
