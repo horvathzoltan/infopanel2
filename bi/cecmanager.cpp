@@ -16,16 +16,18 @@ CecManager::CecManager()
                          _timer = new QTimer(_timerThread);
                          _timer->setInterval(settings.CecTimeInterval()*1000);
                          QObject::connect(_timer, &QTimer::timeout,
-                                          [=]() { if(_enabled) On_Timeout(); });
+                                          [=]() {if(_enabled) On_Timeout(); });
                          _timer->start();
                      });
+    //QObject::connect(_timerThread, &QThread::finished, _timerThread, &QObject::deleteLater);
     _timerThread->start();
 }
 
 CecManager::~CecManager()
 {
-    delete(_timer);
-    delete(_timerThread);
+    _timerThread->quit();
+    _timerThread->wait();
+    _timerThread->deleteLater();
 }
 
 void CecManager::On_Timeout()
