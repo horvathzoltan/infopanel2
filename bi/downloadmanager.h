@@ -17,13 +17,23 @@ private:
     QString GetDownload_CurlCommand(const QList<DownloadFileMetaData> &filelist);
     QString GetDownloadMeta_CurlCommand(const QList<DownloadFileMetaData> &filelist);
 
-    QTimer _timer;
+    QTimer* _timer;
+    bool _On_TimeoutGuard = false;
+    QThread* _timerThread;
+
     static bool _isDownloading;
+
+    bool _enabled;
+    bool _verbose;
+
 
 public:
     DownloadManager();//int downloadInterval);
-    bool Start();
-    bool Stop();
+    ~DownloadManager();
+
+    void SetEnabled(bool v){_enabled=v;}
+    void SetVerbose(bool v){_verbose=v;}
+
 //    void Init(const QString& downloadFolder);
     void AddNewFilesToDownload(const QList<DownloadFileMetaData>& fileList);
     bool Download_Curl(const QList<DownloadFileMetaData>& filelist);

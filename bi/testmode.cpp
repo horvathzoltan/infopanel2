@@ -95,6 +95,7 @@ bool TestMode::Start()
             bool isAppValid = _application!=nullptr;
             if(isAppValid){
                 retVal = true;
+                _aliveManager.SetApplicationVersion(_application->applicationVersion);
                 _aliveManager.SetApplicationDataVersion(_application->applicationDataVersion);
 
                 // induláskor, az applicationban kapunk erről információt
@@ -133,7 +134,7 @@ bool TestMode::Start()
 
 bool TestMode::Stop(){
     _slideshowManager.Stop();
-    _downloadManager.Stop();
+    _downloadManager.SetEnabled(false);
     _aliveManager.Stop();
     _cecManager.SetEnabled(false);
     _logManager.Stop();
@@ -154,7 +155,7 @@ bool TestMode::GetPubApplicationData()
     bool pubDataOk = _webApiManager->PubApplicationDataRequest(pubApplicationDataRequest, &pubApplicationDataResponse);
     if(pubDataOk && pubApplicationDataResponse.resultCode == PubApplicationDataResponseModel::Codes::Ok){
         // a verziót letároljuk
-        _lastApplicationDataVersion = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;
+        _lastApplicationDataVersion = pubApplicationDataResponse.pubApplicationData.applicationDataVersion;        
         _aliveManager.SetApplicationDataVersion(_lastApplicationDataVersion);
 
         auto slideshowSerie = _slideshowManager.GetSerieName();

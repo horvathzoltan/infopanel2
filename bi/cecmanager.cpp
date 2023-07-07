@@ -15,11 +15,14 @@ CecManager::CecManager()
                      {
                          _timer = new QTimer(_timerThread);
                          _timer->setInterval(settings.CecTimeInterval()*1000);
-                         QObject::connect(_timer, &QTimer::timeout,
-                                          [=]() {if(_enabled) On_Timeout(); });
+                         _timer->setSingleShot(true);
+                         QObject::connect(_timer, &QTimer::timeout,[=]()
+                          {
+                            if(_enabled) On_Timeout();
+                            _timer->start();
+                         });
                          _timer->start();
                      });
-    //QObject::connect(_timerThread, &QThread::finished, _timerThread, &QObject::deleteLater);
     _timerThread->start();
 }
 
@@ -31,9 +34,9 @@ CecManager::~CecManager()
 }
 
 void CecManager::On_Timeout()
-{    
-    if(!_On_TimeoutGuard){ // ha egymásra fut, eldobjuk
-        _On_TimeoutGuard=true;
+{
+   // if(!_On_TimeoutGuard){ // ha egymásra fut, eldobjuk
+   //     _On_TimeoutGuard=true;
         int pow0 = CECHelper::GetPowerState(0);
 
         if(pow0==1){
@@ -49,8 +52,8 @@ void CecManager::On_Timeout()
             if(_verbose) zInfo("CEC unknown_state");
         }
 
-        _On_TimeoutGuard=false;
-    }
+   //     _On_TimeoutGuard=false;
+    //}
     return;
 }
 

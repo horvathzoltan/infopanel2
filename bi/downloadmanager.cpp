@@ -6,6 +6,8 @@
 
 #include "constants.h"
 #include "settings.h"
+
+#include <QThread>
 extern Settings settings;
 extern Constants constants;
 
@@ -13,32 +15,54 @@ bool DownloadManager::_isDownloading = false;
 
 DownloadManager::DownloadManager()
 {
-    connect(&_timer, &QTimer::timeout, this, &DownloadManager::On_Timeout);
-    _timer.start();
+    //connect(&_timer, &QTimer::timeout, this, &DownloadManager::On_Timeout);
+    //_timer.start();
+    _timerThread = new QThread();
+    QObject::connect(_timerThread, &QThread::started, [=]()
+                     {
+                         _timer = new QTimer(_timerThread);
+                         _timer->setInterval(settings.DownloadInterval()*1000);
+                         _timer->setSingleShot(true);
+                         QObject::connect(_timer, &QTimer::timeout,[=]()
+                                          {
+                                              if(_enabled) On_Timeout();
+                                              _timer->start();
+                                          });
+                         _timer->start();
+                     });
+    _timerThread->start();
+
 }
 
-bool DownloadManager::Start()
+DownloadManager::~DownloadManager()
 {
-    bool valid = !_timer.isActive();
-    bool retVal = false;
-    if(valid){
-        _timer.setInterval(settings.DownloadInterval()*1000);
-        _timer.start();
-        retVal = true;
-    }
-    return retVal;
+    _timerThread->quit();
+    _timerThread->wait();
+    _timerThread->deleteLater();
 }
 
-bool DownloadManager::Stop()
-{
-    bool valid = _timer.isActive();
-    bool retVal = false;
-    if(valid){
-        _timer.stop();
-        retVal = true;
-    }
-    return retVal;
-}
+//bool DownloadManager::Start()
+//{
+//    bool valid = !_timer.isActive();
+//    bool retVal = false;
+//    if(valid){
+//        _timer.setInterval(settings.DownloadInterval()*1000);
+//        _timer.start();
+//        retVal = true;
+//    }
+//    return retVal;
+//}
+
+//bool DownloadManager::Stop()
+//{
+//    bool valid = _timer.isActive();
+//    bool retVal = false;
+//    if(valid){
+//        _timer.stop();
+//        retVal = true;
+//    }
+//    return retVal;
+//}
 
 
 void DownloadManager::AddNewFilesToDownload(const QList<DownloadFileMetaData> &fileList)
@@ -135,8 +159,8 @@ QList<qint64> DownloadManager::DownloadMeta_Curl(const QList<DownloadFileMetaDat
 bool DownloadManager::TryDownload()
 {    
     bool retVal = false;
-    if(_isDownloading==false){
-        _isDownloading = true;
+    //if(_isDownloading==false){
+   //     _isDownloading = true;
 //        QDir downloadDir(_downloadFolder);
 //        auto filenamelist = downloadDir.entryList(QDir::Files);
 
@@ -188,8 +212,8 @@ bool DownloadManager::TryDownload()
             }
         }
         retVal = true;
-        _isDownloading = false;
-    }
+        //_isDownloading = false;
+    //}
     return retVal;
 }
 
